@@ -95,8 +95,9 @@ static void update_node(bNodeTree *ntree, bNode *node)
 
 	for(sock= node->outputs.first; sock; sock= sock->next) {
 		if(sock->cache) {
-			//free_compbuf(sock->cache);
-			//sock->cache= NULL;
+                    if(sock->type < 7)//Only for Blender Sockets
+			free_compbuf(sock->cache);
+		    sock->cache= NULL;
 		}
 	}
 	node->need_exec= 1;

@@ -78,7 +78,7 @@ IplImage* BOCV_Socket_IplImage(bNodeStack *in){
     if(in->sockettype==7){ //IplImage
         if(!CV_IS_IMAGE(in->data)) //Check for image in
 			return NULL;
-        return in->data;
+        return cvCloneImage((IplImage*)in->data);
     }else if(in->sockettype==2){ //Compbuf RGBA image from blender
     
         int w,h,x,y;

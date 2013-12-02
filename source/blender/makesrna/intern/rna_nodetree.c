@@ -2413,7 +2413,24 @@ static void def_cmp_ycc(StructRNA *srna)
 	RNA_def_property_ui_text(prop, "Mode", "");
 	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
 }
-
+/* -- OpenCV Node ----------------------------------------------------------- */
+static void def_cmp_bocv_threshold(StructRNA *srna)
+{
+	PropertyRNA *prop;
+	static EnumPropertyItem threshold_items[] = {
+		{0, "BINARY",   0, "Binary",   ""},
+		{1, "BINARY_INVERTED",   0, "Binary inverted",   ""},
+		{2, "TRUNCATED", 0, "Truncated", ""},
+                {3, "TO_ZERO", 0, "To Zero", ""},
+                {4, "TO_ZERO_INVERTED", 0, "To Zero inverted", ""},
+		{0, NULL, 0, NULL, NULL}};
+	
+	prop = RNA_def_property(srna, "cvthreshold_type", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "custom1");
+	RNA_def_property_enum_items(prop, threshold_items);
+	RNA_def_property_ui_text(prop, "Type", "Threshold type to use");
+	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
+}
 
 /* -- Texture Nodes --------------------------------------------------------- */
 

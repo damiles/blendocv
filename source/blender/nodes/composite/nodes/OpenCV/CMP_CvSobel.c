@@ -31,67 +31,64 @@
 #include "../../BOCV_util.h"
 
 
-static bNodeSocketTemplate cmp_node_cvSobel_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "X order",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
-	{	SOCK_FLOAT, 1, "Y order",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvSobel_in[] = {
+    { SOCK_OCV_IMAGE, 1, "cvImage", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_INT, 1, "X order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
+    { SOCK_INT, 1, "Y order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvSobel_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvSobel_out[] = {
+    { SOCK_OCV_IMAGE, 0, "cvImage", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
+static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
     //TODO: Use atach buffers
-	int x,y, aperture;
-	IplImage *image, *sobel_img, *img_grey;
-	CV_FUNCNAME( "cvSobel" ); 
-	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
-	if(in[0]->data){
-	CV_CALL(x= (int) in[1]->vec[0]);
-	CV_CALL(y= (int) in[2]->vec[0]);
-	switch(node->custom1){
-		case 0:
-		  CV_CALL(aperture=3);
-		  break;
-		case 1:
-		  CV_CALL(aperture=1);
-		  break;
-		case 2:
-		  CV_CALL(aperture=5);
-		  break;
-		case 3:
-		  CV_CALL(aperture=7);
-		  break;
-		case 4:
-		  CV_CALL(aperture=9);
-		  break;
-		}	      
-	CV_CALL(image = in[0]->data);
-	sobel_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,1);
-	img_grey= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,1);
-	CV_CALL(cvCvtColor(image,img_grey, CV_BGR2GRAY));
-	CV_CALL(cvSobel(img_grey,sobel_img,x,y,aperture));
-	CV_CALL(out[0]->data= sobel_img);
-	}
-	__CV_END__;
+    int x, y, aperture;
+    IplImage *image, *sobel_img, *img_grey;
+
+    if (out[0]->hasoutput == 0) return;
+
+    if (in[0]->data) {
+        x = (int) in[1]->vec[0];
+        y = (int) in[2]->vec[0];
+        switch (node->custom1) {
+            case 0:
+                aperture = 3;
+                break;
+            case 1:
+                aperture = 1;
+                break;
+            case 2:
+                aperture = 5;
+                break;
+            case 3:
+                aperture = 7;
+                break;
+           
+        }
+
+        image = BOCV_Socket_IplImage(in[0]);
+        if (image == NULL)//Check if there are image input
+            return;
+        sobel_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
+        cvSobel(image, sobel_img, 1,1,3);
+        out[0]->data = sobel_img;
+        
+        //generate_preview(data, node, sobel_img);
+    }
+
 }
 
+void register_node_type_cmp_cvsobel(ListBase *lb) {
+    static bNodeType ntype;
 
-void register_node_type_cmp_cvsobel(ListBase *lb)
-{
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVSOBEL, "OpenCV - Sobel", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
-	node_type_socket_templates(&ntype,cmp_node_cvSobel_in, cmp_node_cvSobel_out);
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvSobel);
-	
-	nodeRegisterType(lb, &ntype);
+    node_type_base(&ntype, CMP_NODE_CVSOBEL, "OpenCV - Sobel", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvSobel_in, cmp_node_cvSobel_out);
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvSobel);
+
+    nodeRegisterType(lb, &ntype);
 }
 
 

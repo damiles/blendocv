@@ -171,6 +171,9 @@ extern StructRNA RNA_CompositorNodeValue;
 extern StructRNA RNA_CompositorNodeVecBlur;
 extern StructRNA RNA_CompositorNodeViewer;
 extern StructRNA RNA_CompositorNodeZcombine;
+
+extern StructRNA RNA_CompositorNodeCvThreshold;
+
 extern StructRNA RNA_ConsoleLine;
 extern StructRNA RNA_Constraint;
 extern StructRNA RNA_ConstraintTarget;

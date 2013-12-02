@@ -48,39 +48,22 @@ static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack *
 	float thresh, max_value;	
 	IplImage *image, *threshold_img;
 	
-	CV_FUNCNAME( "cvThreshold" ); 
-	printf("Type of threshold:\n0 - Binary\n1 - Binary inverted\n2 - Truncated\n3 - To Zero\n4 - To Zero inverted\n");
 	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
 	image=BOCV_Socket_IplImage(in[0]);
         if(image==NULL)//Check if there are image input
             return;
 	threshold_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
-        CV_CALL(thresh=in[1]->vec[0]);
-        CV_CALL(max_value=in[2]->vec[0]);
-        switch(node->custom1){
-        case 0:
-          CV_CALL(cvThreshold(image,threshold_img,thresh,max_value,CV_THRESH_BINARY));
-          break;
-        case 1:
-          CV_CALL(cvThreshold(image,threshold_img,thresh,max_value,CV_THRESH_BINARY_INV));
-          break;
-        case 2:
-          CV_CALL(cvThreshold(image,threshold_img,thresh,max_value,CV_THRESH_TRUNC));
-          break;
-        case 3:
-          CV_CALL(cvThreshold(image,threshold_img,thresh,max_value,CV_THRESH_TOZERO));
-          break;
-        case 4:
-          CV_CALL(cvThreshold(image,threshold_img,thresh,max_value,CV_THRESH_TOZERO_INV));
-          break;
-        }
-        CV_CALL(out[0]->data= threshold_img);
+        thresh=in[1]->vec[0];
+        max_value=in[2]->vec[0];
+        cvThreshold(image,threshold_img,thresh,max_value,node->custom1);
+        out[0]->data= threshold_img;
 
-	__CV_END__;
 }
 
+static void node_composit_init_cvthreshold(bNodeTree *UNUSED(ntree), bNode* node, bNodeTemplate *UNUSED(ntemp))
+{
+	node->custom1= 0;
+}
 
 void register_node_type_cmp_cvthreshold(ListBase *lb)
 {
@@ -89,6 +72,7 @@ void register_node_type_cmp_cvthreshold(ListBase *lb)
 	node_type_base(&ntype, CMP_NODE_CVTHRESHOLD, "OpenCV - Threshold", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvThreshold_in, cmp_node_cvThreshold_out);
 	node_type_size(&ntype, 150, 80, 250);
+        node_type_init(&ntype, node_composit_init_cvthreshold);
 	node_type_exec(&ntype, node_composit_exec_cvThreshold);
 	
 	nodeRegisterType(lb, &ntype);

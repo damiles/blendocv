@@ -32,20 +32,20 @@
 
 
 static bNodeSocketTemplate cmp_node_cvSobel_in[] = {
-    { SOCK_OCV_IMAGE, 1, "cvImage", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-    { SOCK_INT, 1, "X order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
-    { SOCK_INT, 1, "Y order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
+    { SOCK_RGBA, 1, "cvImage", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_FLOAT, 1, "X order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
+    { SOCK_FLOAT, 1, "Y order", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 10.0f},
     { -1, 0, ""}
 };
 static bNodeSocketTemplate cmp_node_cvSobel_out[] = {
-    { SOCK_OCV_IMAGE, 0, "cvImage", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { SOCK_RGBA, 0, "cvImage", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
     { -1, 0, ""}
 };
 
 static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
     //TODO: Use atach buffers
     int x, y, aperture;
-    IplImage *image, *sobel_img, *img_grey;
+    IplImage *image, *sobel_img;
 
     if (out[0]->hasoutput == 0) return;
 
@@ -68,14 +68,21 @@ static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in,
            
         }
 
-        image = BOCV_Socket_IplImage(in[0]);
+        image = BOCV_IplImage_attach(in[0]->data);
         if (image == NULL)//Check if there are image input
             return;
-        sobel_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
-        cvSobel(image, sobel_img, 1,1,3);
-        out[0]->data = sobel_img;
         
-        //generate_preview(data, node, sobel_img);
+        CompBuf *output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
+        sobel_img = BOCV_IplImage_attach(output);
+        
+        //sobel_img= BOCV_Alloc_IplImage(image->width,image->height, image->nChannels,output);
+        //sobel_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
+        cvSobel(image, sobel_img, x, y,3);
+        out[0]->data = output;
+        generate_preview(data, node, output);
+        BOCV_IplImage_detach(image);
+        BOCV_IplImage_detach(sobel_img);
+        
     }
 
 }

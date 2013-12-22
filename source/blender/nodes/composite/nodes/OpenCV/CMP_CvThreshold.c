@@ -32,13 +32,13 @@
 
 
 static bNodeSocketTemplate cmp_node_cvThreshold_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "Threshold",			100.0f, 0.0f, 0.0f, 0.0f, 0.0f, 255.0f},
-	{	SOCK_FLOAT, 1, "Max Value",			255.0f, 0.0f, 0.0f, 0.0f, 0.0f, 255.0f},
+	{	SOCK_RGBA, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_FLOAT, 1, "Threshold",			0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_FLOAT, 1, "Max Value",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvThreshold_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 
@@ -48,15 +48,28 @@ static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack *
 	float thresh, max_value;	
 	IplImage *image, *threshold_img;
 	
-	if(out[0]->hasoutput==0) return;
-	image=BOCV_Socket_IplImage(in[0]);
-        if(image==NULL)//Check if there are image input
-            return;
-	threshold_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
-        thresh=in[1]->vec[0];
-        max_value=in[2]->vec[0];
-        cvThreshold(image,threshold_img,thresh,max_value,node->custom1);
-        out[0]->data= threshold_img;
+        if (in[0]->data) {
+            image=BOCV_IplImage_attach(in[0]->data);
+
+            if(image==NULL)//Check if there are image input
+                return;
+
+            CompBuf *output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
+            threshold_img = BOCV_IplImage_attach(output);
+
+            //threshold_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
+            thresh=in[1]->vec[0];
+            max_value=in[2]->vec[0];
+            cvThreshold(image,threshold_img,thresh,max_value,node->custom1);
+
+            generate_preview(data, node, output);
+
+            BOCV_IplImage_detach(image);
+            BOCV_IplImage_detach(threshold_img);
+
+            if(out[0]->hasoutput==0) return;
+            out[0]->data= output;
+        }
 
 }
 
@@ -69,7 +82,7 @@ void register_node_type_cmp_cvthreshold(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVTHRESHOLD, "OpenCV - Threshold", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVTHRESHOLD, "OpenCV - Threshold", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvThreshold_in, cmp_node_cvThreshold_out);
 	node_type_size(&ntype, 150, 80, 250);
         node_type_init(&ntype, node_composit_init_cvthreshold);

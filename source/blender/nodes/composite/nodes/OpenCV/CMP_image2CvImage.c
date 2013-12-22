@@ -36,7 +36,7 @@ static bNodeSocketTemplate cmp_node_image2cvImage_in[]= {
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_image2cvImage_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 
@@ -47,43 +47,13 @@ static void node_composit_exec_image2cvImage(void *data, bNode *node, bNodeStack
 	float *pixelIn;
 	uchar *pixelOut;
 	
-	CV_FUNCNAME( "image2CvImage" ); 
 	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
 	if(in[0]->data){
+            
 		CompBuf *cbuf= typecheck_compbuf(in[0]->data, CB_RGBA);
-		IplImage *img;
-		w=cbuf->x;
-		h=cbuf->y;
-
-		img= cvCreateImage(cvSize(w,h),IPL_DEPTH_8U,4);
+                out[0]->data=cbuf;
 		
-			
-		for(y=0; y<h; y++){
-			pixelIn = cbuf->rect + 4*w*y;
-			pixelOut = (uchar*)(img->imageData + img->widthStep*(h-1-y));
-			for (x=0; x<w; x++, pixelIn+=4, pixelOut+=4) {
-				pixelOut[2] = (uchar)(pixelIn[0]*255);
-				pixelOut[1] = (uchar)(pixelIn[1]*255);
-				pixelOut[0] = (uchar)(pixelIn[2]*255);
-				pixelOut[3] = (uchar)(pixelIn[3]*255);
-			}
-		}
-		
-		//img->imageData= cbuf->rect;
-
-		/*Only for test*/
-		// Create a window
-		//cvNamedWindow("test", 1);
-		//cvShowImage("test", img);
-		//cvWaitKey(0);
-		/*End test*/
-		
-
-		CV_CALL(out[0]->data= img);
 	}
-	__CV_END__;
 }
 
 

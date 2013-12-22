@@ -62,9 +62,14 @@ int BOCV_checkAreSameType(void* src1,void* src2 )
 
 IplImage* BOCV_IplImage_attach(CompBuf* cbuf)
 {
+    if(cbuf->x>0 && cbuf->y>0){
     	IplImage *img = cvCreateImageHeader(cvSize(cbuf->x,cbuf->y),IPL_DEPTH_32F,cbuf->type);
 	cvSetData(img,cbuf->rect,cbuf->x * cbuf->type * sizeof(float)); // always 4 byte align.
-	return img;
+        return img;
+    }else{
+        return NULL;
+    }
+	
 }
 
 void BOCV_IplImage_detach(IplImage *img)
@@ -72,38 +77,3 @@ void BOCV_IplImage_detach(IplImage *img)
 	cvReleaseImageHeader(&img);
 }
 
-IplImage* BOCV_Socket_IplImage(bNodeStack *in){
-    
-    //Check for Socket type
-    if(in->sockettype==7){ //IplImage
-        if(!CV_IS_IMAGE(in->data)) //Check for image in
-			return NULL;
-        return cvCloneImage((IplImage*)in->data);
-    }else if(in->sockettype==2){ //Compbuf RGBA image from blender
-    
-        int w,h,x,y;
-        float *pixelIn;
-        uchar *pixelOut;
-        CompBuf *cbuf= typecheck_compbuf(in->data, CB_RGBA);
-        IplImage *img;
-        w=cbuf->x;
-        h=cbuf->y;
-
-        img= cvCreateImage(cvSize(w,h),IPL_DEPTH_8U,4);
-
-
-        for(y=0; y<h; y++){
-                pixelIn = cbuf->rect + 4*w*y;
-                pixelOut = (uchar*)(img->imageData + img->widthStep*(h-1-y));
-                for (x=0; x<w; x++, pixelIn+=4, pixelOut+=4) {
-                        pixelOut[2] = (uchar)(pixelIn[0]*255);
-                        pixelOut[1] = (uchar)(pixelIn[1]*255);
-                        pixelOut[0] = (uchar)(pixelIn[2]*255);
-                        pixelOut[3] = (uchar)(pixelIn[3]*255);
-                }
-        }
-        
-        return img;
-    }
-    return NULL;
-}

@@ -31,21 +31,21 @@
 #include "../../BOCV_util.h"
 
 static bNodeSocketTemplate cmp_node_cvCvtColor_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvCvtColor_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 
 static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
 	int w,h;
-	if(out[0]->hasoutput==0) return;
+	
 	if(in[0]->data){
 		IplImage *img, *gray;	
-		img=BOCV_Socket_IplImage(in[0]);
+		img=BOCV_IplImage_attach(in[0]->data);
 		if(img==NULL)//Check if there are image input
                     return;
                 
@@ -54,12 +54,16 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
 		
 		/* Must implement all converts*/
 		/* now only rgb to gray*/
-		gray = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+		CompBuf *output= alloc_compbuf(w,h, 1, 1);
+                gray = BOCV_IplImage_attach(output);
+                //gray = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
 		
 		cvCvtColor(img, gray, CV_BGR2GRAY);
 
-		
-		out[0]->data= gray;
+		generate_preview(data, node, output);
+                
+                if(out[0]->hasoutput==0) return;
+		out[0]->data= output;
 	}
 }
 
@@ -68,7 +72,7 @@ void register_node_type_cmp_cvcvtcolor(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVCVTCOLOR, "OpenCV - Convert color", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVCVTCOLOR, "OpenCV - Convert color", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCvtColor_in, cmp_node_cvCvtColor_out);
 	node_type_size(&ntype, 150, 80, 250);
 	node_type_exec(&ntype, node_composit_exec_cvCvtColor);

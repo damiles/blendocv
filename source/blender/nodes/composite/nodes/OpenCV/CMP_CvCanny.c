@@ -34,13 +34,13 @@
 
 
 static bNodeSocketTemplate cmp_node_cvCanny_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "Image",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},	
+	{	SOCK_RGBA, 1, "Image",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},	
 	{	SOCK_FLOAT, 1, "Threshold 1",			50.0f, 0.0f, 0.0f, 0.0f, 0.0f, 255.0f},
         {	SOCK_FLOAT, 1, "Threshold 2",			50.0f, 0.0f, 0.0f, 0.0f, 0.0f, 255.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvCanny_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "Image",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "Image",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 

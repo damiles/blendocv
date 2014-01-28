@@ -47,7 +47,7 @@ static void node_composit_exec_cvAddS(void *data, bNode *node, bNodeStack **in, 
 {
 	CvArr* dst;
 	CvArr* src1;
-	CvArr* mask;
+	CvArr* mask=NULL;
         CompBuf *dst_buf;
 
 	CvScalar s;
@@ -56,7 +56,8 @@ static void node_composit_exec_cvAddS(void *data, bNode *node, bNodeStack **in, 
 	cvSetErrMode(1); //Parent mode error
 	if(in[0]->data){
             src1= BOCV_IplImage_attach(in[0]->data);
-            mask = BOCV_IplImage_attach(in[2]->data);
+            if(in[2]->data)
+                mask = BOCV_IplImage_attach(in[2]->data);
             dst_buf=dupalloc_compbuf(in[0]->data);
             dst=BOCV_IplImage_attach(dst_buf);
 

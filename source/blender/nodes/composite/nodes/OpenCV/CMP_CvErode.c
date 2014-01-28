@@ -33,7 +33,7 @@
 
 static bNodeSocketTemplate cmp_node_cvErode_in[]= {
 	{	SOCK_OCV_IMAGE, 1, "Image",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "Iterations",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
+	{	SOCK_INT, 1, "Iterations",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvErode_out[]= {

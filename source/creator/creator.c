@@ -144,7 +144,7 @@ extern int pluginapi_force_ref(void);  /* from blenpluginapi:pluginapi.c */
 char bprogname[FILE_MAX]; /* from blenpluginapi:pluginapi.c */
 char btempdir[FILE_MAX];
 
-#define BLEND_VERSION_STRING_FMT "Blender %d.%02d (sub %d)\n", BLENDER_VERSION/100, BLENDER_VERSION%100, BLENDER_SUBVERSION
+#define BLEND_VERSION_STRING_FMT "BlendOcv %d.%02d (sub %d)\n", BLENDER_VERSION/100, BLENDER_VERSION%100, BLENDER_SUBVERSION
 
 /* Initialize callbacks for the modules that need them */
 static void setCallbacks(void); 
@@ -167,7 +167,7 @@ static void blender_esc(int sig)
 	
 	if (sig == 2) {
 		if (count) {
-			printf("\nBlender killed\n");
+			printf("\nBlendOcv killed\n");
 			exit(2);
 		}
 		printf("\nSent an internal break event. Press ^C again to kill Blender\n");
@@ -200,7 +200,7 @@ static int print_help(int UNUSED(argc), const char **UNUSED(argv), void *data)
 	bArgs *ba = (bArgs*)data;
 
 	printf (BLEND_VERSION_STRING_FMT);
-	printf ("Usage: blender [args ...] [file] [args ...]\n\n");
+	printf ("Usage: blendOcv [args ...] [file] [args ...]\n\n");
 
 	printf ("Render Options:\n");
 	BLI_argsPrintArgDoc(ba, "--background");
@@ -392,7 +392,7 @@ static int set_env(int argc, const char **argv, void *UNUSED(data))
 {
 	/* "--env-system-scripts" --> "BLENDER_SYSTEM_SCRIPTS" */
 
-	char env[64]= "BLENDER";
+	char env[64]= "BLENDOCV";
 	char *ch_dst= env + 7; /* skip BLENDER */
 	const char *ch_src= argv[0] + 5; /* skip --env */
 

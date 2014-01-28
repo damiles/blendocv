@@ -248,6 +248,8 @@ typedef struct bNodeType {
 #define NODE_CLASS_OCV_CAMERACALIBRATION        211
 #define NODE_CLASS_OCV_MACHINELEARNING          212
 
+#define NODE_CLASS_BLENDERSUB                   300
+
 /* enum values for input/output */
 #define SOCK_IN		1
 #define SOCK_OUT	2

@@ -220,21 +220,34 @@ static void node_add_menu(bContext *C, uiLayout *layout, void *arg_nodeclass)
 
 static void node_add_sub_menu_opencv(bContext *C, uiLayout *layout, void *arg_nodeclass)
 {
-	uiItemMenuF(layout, "Input", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_INPUT));
-	uiItemMenuF(layout, "Output", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_OUTPUT));
+	uiItemMenuF(layout, "OpenCV Input", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_INPUT));
+	uiItemMenuF(layout, "OpenCV Output", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_OUTPUT));
 	uiItemMenuF(layout, "Array operations", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_ARRAY));
 	uiItemMenuF(layout, "Drawing functions", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_DRAW));
 	uiItemMenuF(layout, "Data persistent", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_DATAPERSIST));
 	uiItemMenuF(layout, "Miscelllaneous", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MISC));
 	uiItemMenuF(layout, "Image processing", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_IMAGEPROCESS));
 	uiItemMenuF(layout, "Structural analysis", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_STRUCTANALYSIS));
-	uiItemMenuF(layout, "Motion analysis and object tracking", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MOTIONANALYSIS));
+	uiItemMenuF(layout, "Motion and object tracking", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MOTIONANALYSIS));
 	uiItemMenuF(layout, "Pattern recognition", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_PATTERNRECOGNITION));
-	uiItemMenuF(layout, "Camera calibration and 3D reconstruction", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_CAMERACALIBRATION));
+	uiItemMenuF(layout, "Camera calib and 3D rec", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_CAMERACALIBRATION));
 	uiItemMenuF(layout, "Machine learning", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MACHINELEARNING));
 }
 
 #define IFACE_(msgid) UI_translate_do_iface(msgid)
+
+static void node_add_sub_menu_blender(bContext *C, uiLayout *layout, void *arg_nodeclass)
+{
+	uiItemMenuF(layout, IFACE_(N_("Color")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_COLOR));
+        uiItemMenuF(layout, IFACE_(N_("Vector")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_VECTOR));
+        uiItemMenuF(layout, IFACE_(N_("Filter")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_FILTER));
+        uiItemMenuF(layout, IFACE_(N_("Convertor")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_CONVERTOR));
+        uiItemMenuF(layout, IFACE_(N_("Matte")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_MATTE));
+        uiItemMenuF(layout, IFACE_(N_("Distort")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_DISTORT));
+
+}
+
+
 static void node_menu_add(const bContext *C, Menu *menu)
 {
 	SpaceNode *snode= CTX_wm_space_node(C);
@@ -256,15 +269,25 @@ static void node_menu_add(const bContext *C, Menu *menu)
 	else if(snode->treetype==NTREE_COMPOSIT) {
 		uiItemMenuF(layout, IFACE_(N_("Input")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_INPUT));
 		uiItemMenuF(layout, IFACE_(N_("Output")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OUTPUT));
-		uiItemMenuF(layout, IFACE_(N_("Color")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_COLOR));
-		uiItemMenuF(layout, IFACE_(N_("Vector")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_VECTOR));
-		uiItemMenuF(layout, IFACE_(N_("Filter")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OP_FILTER));
-		uiItemMenuF(layout, IFACE_(N_("Convertor")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_CONVERTOR));
-		uiItemMenuF(layout, IFACE_(N_("Matte")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_MATTE));
-		uiItemMenuF(layout, IFACE_(N_("Distort")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_DISTORT));
-		uiItemMenuF(layout, IFACE_(N_("Group")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_GROUP));
+		
+                uiItemMenuF(layout, "OpenCV Input", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_INPUT));
+                uiItemMenuF(layout, "OpenCV Output", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_OUTPUT));
+                uiItemMenuF(layout, "Array operations", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_ARRAY));
+                uiItemMenuF(layout, "Drawing functions", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_DRAW));
+                uiItemMenuF(layout, "Data persistent", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_DATAPERSIST));
+                uiItemMenuF(layout, "Miscelllaneous", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MISC));
+                uiItemMenuF(layout, "Image processing", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_IMAGEPROCESS));
+                uiItemMenuF(layout, "Structural analysis", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_STRUCTANALYSIS));
+                uiItemMenuF(layout, "Motion analysis and object tracking", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MOTIONANALYSIS));
+                uiItemMenuF(layout, "Pattern recognition", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_PATTERNRECOGNITION));
+                uiItemMenuF(layout, "Camera calibration and 3D reconstruction", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_CAMERACALIBRATION));
+                uiItemMenuF(layout, "Machine learning", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MACHINELEARNING));
+                
+                uiItemMenuF(layout, IFACE_(N_("Group")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_GROUP));
 		uiItemMenuF(layout, IFACE_(N_("Layout")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_LAYOUT));
-                uiItemMenuF(layout, "OpenCV", 0, node_add_sub_menu_opencv, SET_INT_IN_POINTER(NODE_CLASS_OPENCV));
+                //uiItemMenuF(layout, "OpenCV", 0, node_add_sub_menu_opencv, SET_INT_IN_POINTER(NODE_CLASS_OPENCV));
+                uiItemMenuF(layout, "OpenCV", 0, node_add_sub_menu_blender, SET_INT_IN_POINTER(NODE_CLASS_BLENDERSUB));
+                
 	}
 	else if(snode->treetype==NTREE_TEXTURE) {
 		uiItemMenuF(layout, IFACE_(N_("Input")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_INPUT));

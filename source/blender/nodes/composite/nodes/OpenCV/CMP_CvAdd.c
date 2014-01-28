@@ -49,7 +49,7 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
 	CvArr* dst;
 	CvArr* src1;
 	CvArr* src2;
-	CvArr* mask;
+	CvArr* mask=NULL;
         CompBuf *dst_buf;
 
         if(out[0]->hasoutput==0) return;
@@ -60,8 +60,8 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
                 return;
                   //"The source inputs are differents"
 
-
-            mask = BOCV_IplImage_attach(in[2]->data);
+            if(in[2]->data)
+                mask = BOCV_IplImage_attach(in[2]->data);
             dst_buf = dupalloc_compbuf(in[0]->data);
             dst=BOCV_IplImage_attach(dst_buf);
 

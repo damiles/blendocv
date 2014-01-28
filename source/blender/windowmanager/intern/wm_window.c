@@ -277,18 +277,18 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
 	if(win->screen && win->screen->temp) {
 		char *title= GHOST_GetTitle(win->ghostwin);
 		if(title==NULL || title[0]==0)
-			GHOST_SetTitle(win->ghostwin, "Blender");
+			GHOST_SetTitle(win->ghostwin, "BlendOcv");
 	}
 	else {
 		
 		/* this is set to 1 if you don't have startup.blend open */
 		if(G.save_over && G.main->name[0]) {
 			char str[sizeof(G.main->name) + 12];
-			BLI_snprintf(str, sizeof(str), "Blender%s [%s]", wm->file_saved ? "":"*", G.main->name);
+			BLI_snprintf(str, sizeof(str), "BlendOcv%s [%s]", wm->file_saved ? "":"*", G.main->name);
 			GHOST_SetTitle(win->ghostwin, str);
 		}
 		else
-			GHOST_SetTitle(win->ghostwin, "Blender");
+			GHOST_SetTitle(win->ghostwin, "BlendOcv");
 
 		/* Informs GHOST of unsaved changes, to set window modified visual indicator (MAC OS X)
 		 and to give hint of unsaved changes for a user warning mechanism
@@ -405,7 +405,7 @@ void wm_window_add_ghostwindows(bContext* C, wmWindowManager *wm)
 				win->windowstate= initialstate;
 				useprefsize= 0;
 			}
-			wm_window_add_ghostwindow(C, "Blender", win);
+			wm_window_add_ghostwindow(C, "BlendOcv", win);
 		}
 		/* happens after fileread */
 		if(win->eventstate==NULL)

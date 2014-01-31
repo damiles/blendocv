@@ -33,59 +33,73 @@
 
 
 
-static bNodeSocketTemplate cmp_node_cvAdd_in[]= {
-	{	SOCK_RGBA, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_RGBA, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_RGBA, 1, "Mask",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvAdd_in[] = {
+    { SOCK_RGBA, 1, "CvArr", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_RGBA, 1, "CvArr", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_RGBA, 1, "Mask", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvAdd_out[]= {
-	{	SOCK_RGBA, 0, "CvArr",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvAdd_out[] = {
+    { SOCK_RGBA, 0, "CvArr", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
-	CvArr* dst;
-	CvArr* src1;
-	CvArr* src2;
-	CvArr* mask=NULL;
-        CompBuf *dst_buf;
+static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
+    CvArr* dst;
+    CvArr* src1;
+    CvArr* src2;
+    CvArr* mask = NULL;
+    CompBuf *dst_buf;
 
-        if(out[0]->hasoutput==0) return;
-	if((in[0]->data)&&(in[1]->data)){
-            src1= BOCV_IplImage_attach(in[0]->data);
-            src2= BOCV_IplImage_attach(in[1]->data);
-            if(!BOCV_checkAreSameType(src1, src2))
+    if (out[0]->hasoutput == 0) return;
+    if ((in[0]->data)&&(in[1]->data)) {
+        src1 = BOCV_IplImage_attach(in[0]->data);
+        src2 = BOCV_IplImage_attach(in[1]->data);
+        if (!BOCV_checkAreSameType(src1, src2)){
+            node->error= 1;
+            BKE_report(NULL, 1<<4,"Inputs have different sizes");
+            return;
+        }else{
+            node->error= 0;
+        }
+        //"The source inputs are differents"
+
+        if (in[2]->data){
+            IplImage* mask32FC3 = BOCV_IplImage_attach(in[2]->data);
+            
+            if (!BOCV_checkAreSameType(src1, mask32FC3)){
+                node->error= 1;
                 return;
-                  //"The source inputs are differents"
-
-            if(in[2]->data)
-                mask = BOCV_IplImage_attach(in[2]->data);
-            dst_buf = dupalloc_compbuf(in[0]->data);
-            dst=BOCV_IplImage_attach(dst_buf);
-
-            if(dst)
-            {
-                    cvAdd(src1, src2, dst, mask);
-                    out[0]->data= dst_buf;
+            }else{
+                node->error= 0;
             }
-            BOCV_IplImage_detach(src1);
-            BOCV_IplImage_detach(src2);
-            BOCV_IplImage_detach(dst);
-	}
-	
+            
+            mask= cvCreateImage(cvGetSize(src1), IPL_DEPTH_8U, 1);
+            cvConvertScale(mask32FC3, mask,1,0);
+        }
+        dst_buf = dupalloc_compbuf(in[0]->data);
+        dst = BOCV_IplImage_attach(dst_buf);
+
+        if (dst) {
+            cvAdd(src1, src2, dst, mask);
+            out[0]->data = dst_buf;
+        }
+        BOCV_IplImage_detach(src1);
+        BOCV_IplImage_detach(src2);
+        BOCV_IplImage_detach(dst);
+    }
+
 }
-void register_node_type_cmp_cvadd(ListBase *lb)
-{
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVADD, "OpenCV - Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
-	node_type_socket_templates(&ntype, cmp_node_cvAdd_in, cmp_node_cvAdd_out);
-	
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvAdd);
-	
-	nodeRegisterType(lb, &ntype);
+
+void register_node_type_cmp_cvadd(ListBase *lb) {
+    static bNodeType ntype;
+
+    node_type_base(&ntype, CMP_NODE_CVADD, "OpenCV - Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvAdd_in, cmp_node_cvAdd_out);
+
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvAdd);
+
+    nodeRegisterType(lb, &ntype);
 }
 

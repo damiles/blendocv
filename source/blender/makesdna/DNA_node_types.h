@@ -108,7 +108,7 @@ typedef struct bNodeSocket {
 #define SOCK_BOOLEAN		4
 #define SOCK_MESH			5
 #define SOCK_INT			6
-/*OpenCV sock Types*/
+/*OpenCV sock Types May be don't used*/
 #define SOCK_OCV_IMAGE                  7
 #define SOCK_OCV_POINT                  8
 #define SOCK_OCV_POINT2D32f             9
@@ -167,7 +167,9 @@ typedef struct bNode {
 	short lasty, menunr;	/* lasty: check preview render status, menunr: browse ID blocks */
 	short stack_index;		/* for groupnode, offset in global caller stack */
 	short nr;				/* number of this node in list, used for UI exec events */
-	
+	int error;
+        int dummy; //only for get complete 64 bit processor optimized
+        
 	ListBase inputs, outputs;
 	struct bNode *parent;	/* parent node */
 	struct ID *id;			/* optional link to libdata */

@@ -58,7 +58,7 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
                 gray = BOCV_IplImage_attach(output);
                 //gray = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
 		
-		cvCvtColor(img, gray, CV_BGR2GRAY);
+		cvCvtColor(img, gray, CV_BGRA2GRAY);
 
 		generate_preview(data, node, output);
                 

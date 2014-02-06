@@ -85,8 +85,11 @@
 
 CvArr* BOCV_CreateArrFrom(void* src);
 int BOCV_checkAreSameType(void* src1,void* src2 );
+int BOCV_checkSameNChannels(void* src1, void* src2);
+int BOCV_checkMask(void* src1, void* mask);
 IplImage *BOCV_IplImage_attach(CompBuf *cbuf);
+IplImage *BOCV_Mask_attach(CompBuf *cbuf);
 void BOCV_IplImage_detach(IplImage *img);
-IplImage *BOCV_Socket_IplImage(bNodeStack *in);
-IplImage *BOCV_Alloc_IplImage(int x, int y, int type, CompBuf* cbuf);
+/*IplImage *BOCV_Socket_IplImage(bNodeStack *in);
+IplImage *BOCV_Alloc_IplImage(int x, int y, int type, CompBuf* cbuf);*/
 #endif

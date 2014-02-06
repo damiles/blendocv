@@ -56,19 +56,29 @@ static void node_composit_exec_cvAndS(void *data, bNode *node, bNodeStack **in, 
         if(in[0]->data){
 		//Inputs
 		src1 = BOCV_IplImage_attach(in[0]->data);
-		mask = BOCV_IplImage_attach(in[2]->data);
+		mask = BOCV_Mask_attach(in[2]->data);
                 //Output
                 dst_buf=dupalloc_compbuf(in[0]->data);
                 dst=BOCV_IplImage_attach(dst_buf);
 
+                //Checks
+                //Check Image - Mask sizes
+                if(mask){
+                    if (!BOCV_checkMask(src1, mask)){
+                        node->error= 1;
+                        return;
+                    }
+                }
+                
 		if(dst)		
 		{			
-		s.val[0]= (int) (in[1]->vec[0]);	
-		s.val[1]= (int) (in[1]->vec[0]);	
-		s.val[2]= (int) (in[1]->vec[0]);	
-			cvAndS(src1,s, dst, mask);
-		 	out[0]->data= dst;
+                    s.val[0]= (int) (in[1]->vec[0]);	
+                    s.val[1]= (int) (in[1]->vec[0]);	
+                    s.val[2]= (int) (in[1]->vec[0]);	
+                    cvAndS(src1,s, dst, mask);
+                    out[0]->data= dst_buf;
 		}
+                
                 BOCV_IplImage_detach(src1);
                 BOCV_IplImage_detach(mask);
                 BOCV_IplImage_detach(dst);

@@ -43,28 +43,38 @@ static bNodeSocketTemplate cmp_node_cvCopy_out[]= {
 
 static void node_composit_exec_cvCopy(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
-    //TODO: Use atach buffers
-     
-	int w,h;
-	CV_FUNCNAME( "cvCopy" ); 
-	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
+        CvArr* dst;
+	CvArr* src1;
+	CvArr* mask=NULL;
+        CompBuf* dst_buf;
+        
+    	if(out[0]->hasoutput==0) return;
 	if(in[0]->data){
-		IplImage *img, *imgOut, *mask;
-		CV_CALL(img = in[0]->data);
-		w=img->width;
-		h=img->height;
-		
-		/* Must implement all converts*/
-		imgOut = cvCreateImage(cvSize(w,h), img->depth, img->nChannels);
-		mask = in[1]->data;
-		
-		CV_CALL(cvCopy(img, imgOut, mask));
-		
-		CV_CALL(out[0]->data= imgOut);
+                //Inputs
+		src1 = BOCV_IplImage_attach(in[0]->data);
+		mask = BOCV_Mask_attach(in[1]->data);
+                
+                //Output
+                dst_buf=dupalloc_compbuf(in[0]->data);
+                dst=BOCV_IplImage_attach(dst_buf);
+                
+                //Check Image - Mask sizes
+                if(mask){
+                    if (!BOCV_checkMask(src1, mask)){
+                        node->error= 1;
+                        return;
+                    }
+                }
+                
+                //OpenCV function
+		cvCopy(src1, dst, mask);
+                out[0]->data= dst_buf;
+                
+                //Free Memory
+                BOCV_IplImage_detach(src1);
+                BOCV_IplImage_detach(mask);
+                BOCV_IplImage_detach(dst);
 	}
-	__CV_END__;
 }
 
 

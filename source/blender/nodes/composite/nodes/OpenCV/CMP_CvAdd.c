@@ -57,25 +57,19 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
         src2 = BOCV_IplImage_attach(in[1]->data);
         if (!BOCV_checkAreSameType(src1, src2)){
             node->error= 1;
-            BKE_report(NULL, 1<<4,"Inputs have different sizes");
             return;
-        }else{
-            node->error= 0;
         }
-        //"The source inputs are differents"
-
+        if(!BOCV_checkSameNChannels(src1, src2)){
+            node->error= 1;
+            return;
+        }
+        
         if (in[2]->data){
-            IplImage* mask32FC3 = BOCV_IplImage_attach(in[2]->data);
-            
-            if (!BOCV_checkAreSameType(src1, mask32FC3)){
+            mask = BOCV_Mask_attach(in[2]->data);
+            if (!BOCV_checkMask(src1, mask)){
                 node->error= 1;
                 return;
-            }else{
-                node->error= 0;
             }
-            
-            mask= cvCreateImage(cvGetSize(src1), IPL_DEPTH_8U, 1);
-            cvConvertScale(mask32FC3, mask,1,0);
         }
         dst_buf = dupalloc_compbuf(in[0]->data);
         dst = BOCV_IplImage_attach(dst_buf);
@@ -94,7 +88,7 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
 void register_node_type_cmp_cvadd(ListBase *lb) {
     static bNodeType ntype;
 
-    node_type_base(&ntype, CMP_NODE_CVADD, "OpenCV - Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_base(&ntype, CMP_NODE_CVADDS, "OpenCV - Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
     node_type_socket_templates(&ntype, cmp_node_cvAdd_in, cmp_node_cvAdd_out);
 
     node_type_size(&ntype, 150, 80, 250);

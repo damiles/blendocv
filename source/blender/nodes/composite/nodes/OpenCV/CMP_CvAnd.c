@@ -48,7 +48,7 @@ static void node_composit_exec_cvAnd(void *data, bNode *node, bNodeStack **in, b
 	CvArr* dst;
 	CvArr* src1;
 	CvArr* src2;
-	CvArr* mask;
+	CvArr* mask=NULL;
         CompBuf* dst_buf;
 
 	if(out[0]->hasoutput==0) return;
@@ -56,13 +56,30 @@ static void node_composit_exec_cvAnd(void *data, bNode *node, bNodeStack **in, b
                 //Inputs
 		src1 = BOCV_IplImage_attach(in[0]->data);
 		src2 = BOCV_IplImage_attach(in[1]->data);
-                mask = BOCV_IplImage_attach(in[2]->data);
+                mask = BOCV_Mask_attach(in[2]->data);
+                
                 //Output
                 dst_buf=dupalloc_compbuf(in[0]->data);
                 dst=BOCV_IplImage_attach(dst_buf);
 
-                if(!BOCV_checkAreSameType(src1, src2))
+                //Checks
+                //Check Image Sizes
+                if(!BOCV_checkAreSameType(src1, src2)){
+                    node->error= 1;
                     return;
+                }
+                //Check Image number Channels
+                if(!BOCV_checkSameNChannels(src1, src2)){
+                    node->error= 1;
+                    return;
+                }
+                //Check Image - Mask sizes
+                if(mask){
+                    if (!BOCV_checkMask(src1, mask)){
+                        node->error= 1;
+                        return;
+                    }
+                }
 		
 		if(dst)		
 		{

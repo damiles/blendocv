@@ -33,53 +33,64 @@
 
 
 
-static bNodeSocketTemplate cmp_node_cvMult_in[]= {
-	{	SOCK_OCV_ARR, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_OCV_ARR, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvMult_in[] = {
+    { SOCK_RGBA, 1, "CvArr", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_RGBA, 1, "CvArr", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_FLOAT, 1, "scale", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100000.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvMult_out[]= {
-	{	SOCK_OCV_ARR, 0, "CvArr",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvMult_out[] = {
+    { SOCK_RGBA, 0, "CvArr", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvMult(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
-	CvArr* dst;
-	CvArr* src1;
-	CvArr* src2;
-	
-	CV_FUNCNAME( "cvMult" ); 
-	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
-	if((in[0]->data)&&(in[1]->data)){
-			
-		CV_CALL(src1 = in[0]->data);
-		CV_CALL(src2 = in[1]->data);
-		if(!BOCV_checkAreSameType(src1, src2))
-			  CV_ERROR( CV_StsBadArg,"The source inputs are differents" );
+static void node_composit_exec_cvMult(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
+    CvArr* dst;
+    CvArr* src1;
+    CvArr* src2;
+    CompBuf *dst_buf;
 
-		CV_CALL(dst=BOCV_CreateArrFrom(src2));
-		if(dst)		
-		{
-			CV_CALL(cvMul(src1, src2, dst, 1.0));
-		 	CV_CALL(out[0]->data= dst);
-		}
-	}
-	__CV_END__;
+    if (out[0]->hasoutput == 0) return;
+    if ((in[0]->data) && in[1]->data) {
+        //Get inuts
+        src1 = BOCV_IplImage_attach(in[0]->data);
+        src2 = BOCV_IplImage_attach(in[1]->data);
+        
+        //Create output
+        dst_buf = dupalloc_compbuf(in[0]->data);
+        dst = BOCV_IplImage_attach(dst_buf);
+
+
+        //Check for inputs    
+        if (!BOCV_checkAreSameType(src1, src2)) {
+            node->error = 1;
+            return;
+        }
+        if (!BOCV_checkSameNChannels(src1, src2)) {
+            node->error = 1;
+            return;
+        }
+            
+        cvMul(src1, src2, dst, in[2]->vec[0]);
+        
+        //Output
+        out[0]->data = dst_buf;
+        
+        //Release memory
+        BOCV_IplImage_detach(src1);
+        BOCV_IplImage_detach(src2);
+        BOCV_IplImage_detach(dst);
+    }
 }
 
+void register_node_type_cmp_cvmult(ListBase *lb) {
+    static bNodeType ntype;
 
-void register_node_type_cmp_cvmult(ListBase *lb)
-{
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVMULT, "OpenCV - Mult", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
-	node_type_socket_templates(&ntype,cmp_node_cvMult_in, cmp_node_cvMult_out);
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvMult);
-	
-	nodeRegisterType(lb, &ntype);
+    node_type_base(&ntype, CMP_NODE_CVMULT, "OpenCV - Mult", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvMult_in, cmp_node_cvMult_out);
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvMult);
+
+    nodeRegisterType(lb, &ntype);
 }
 

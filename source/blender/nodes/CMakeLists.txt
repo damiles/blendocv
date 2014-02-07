@@ -105,9 +105,7 @@ set(SRC
 	composite/node_composite_util.c
 
 	composite/nodes/OpenCV/CMP_CvAdd.c
-	composite/nodes/OpenCV/CMP_CvAddS.c
 	composite/nodes/OpenCV/CMP_CvAnd.c
-	composite/nodes/OpenCV/CMP_CvAndS.c
 	composite/nodes/OpenCV/CMP_CvCanny.c
 	composite/nodes/OpenCV/CMP_CvCopy.c
 	composite/nodes/OpenCV/CMP_CvCvtColor.c
@@ -124,17 +122,13 @@ set(SRC
 	composite/nodes/OpenCV/CMP_CvNegative.c
 	composite/nodes/OpenCV/CMP_CvNot.c
 	composite/nodes/OpenCV/CMP_CvOr.c
-	composite/nodes/OpenCV/CMP_CvOrS.c
 	composite/nodes/OpenCV/CMP_CvPoint.c
 	composite/nodes/OpenCV/CMP_CvResize.c
 	composite/nodes/OpenCV/CMP_CvSmooth.c
 	composite/nodes/OpenCV/CMP_CvSobel.c
 	composite/nodes/OpenCV/CMP_CvSub.c
-	composite/nodes/OpenCV/CMP_CvSubRS.c
-	composite/nodes/OpenCV/CMP_CvSubS.c
 	composite/nodes/OpenCV/CMP_CvThreshold.c
 	composite/nodes/OpenCV/CMP_CvXor.c
-	composite/nodes/OpenCV/CMP_CvXorS.c
 	composite/nodes/OpenCV/CMP_image2CvImage.c
 	composite/BOCV_util.c
 

@@ -121,9 +121,7 @@ void register_node_type_cmp_tonemap(ListBase *lb);
 void register_node_type_cmp_lensdist(ListBase *lb);
 
 void register_node_type_cmp_cvadd(ListBase *lb);
-void register_node_type_cmp_cvadds(ListBase *lb);
 void register_node_type_cmp_cvand(ListBase *lb);
-void register_node_type_cmp_cvands(ListBase *lb);
 void register_node_type_cmp_cvcanny(ListBase *lb);
 void register_node_type_cmp_cvcopy(ListBase *lb);
 void register_node_type_cmp_cvcvtcolor(ListBase *lb);
@@ -140,17 +138,13 @@ void register_node_type_cmp_cvmult(ListBase *lb);
 void register_node_type_cmp_cvnegative(ListBase *lb);
 void register_node_type_cmp_cvnot(ListBase *lb);
 void register_node_type_cmp_cvor(ListBase *lb);
-void register_node_type_cmp_cvors(ListBase *lb);
 void register_node_type_cmp_cvpoint(ListBase *lb);
 void register_node_type_cmp_cvresize(ListBase *lb);
 void register_node_type_cmp_cvsmooth(ListBase *lb);
 void register_node_type_cmp_cvsobel(ListBase *lb);
 void register_node_type_cmp_cvsub(ListBase *lb);
-void register_node_type_cmp_cvsubrs(ListBase *lb);
-void register_node_type_cmp_cvsubs(ListBase *lb);
 void register_node_type_cmp_cvthreshold(ListBase *lb);
 void register_node_type_cmp_cvxor(ListBase *lb);
-void register_node_type_cmp_cvxors(ListBase *lb);
 void register_node_type_cmp_image2cvimage(ListBase *lb);
 
 #endif

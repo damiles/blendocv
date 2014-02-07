@@ -1848,9 +1848,7 @@ static void registerCompositNodes(ListBase *ntypelist)
 	register_node_type_cmp_lensdist(ntypelist);
         
         register_node_type_cmp_cvadd(ntypelist );
-	register_node_type_cmp_cvadds(ntypelist);
 	register_node_type_cmp_cvand(ntypelist);
-	register_node_type_cmp_cvands(ntypelist);
 	register_node_type_cmp_cvcanny(ntypelist);
 	register_node_type_cmp_cvcopy(ntypelist);
 	register_node_type_cmp_cvcvtcolor(ntypelist);
@@ -1867,17 +1865,13 @@ static void registerCompositNodes(ListBase *ntypelist)
 	register_node_type_cmp_cvnegative(ntypelist);
 	register_node_type_cmp_cvnot(ntypelist);
 	register_node_type_cmp_cvor(ntypelist);
-	register_node_type_cmp_cvors(ntypelist);
 	register_node_type_cmp_cvpoint(ntypelist);
 	register_node_type_cmp_cvresize(ntypelist);
 	register_node_type_cmp_cvsmooth(ntypelist);
 	register_node_type_cmp_cvsobel(ntypelist);
 	register_node_type_cmp_cvsub(ntypelist);
-	register_node_type_cmp_cvsubrs(ntypelist);
-	register_node_type_cmp_cvsubs(ntypelist);
 	register_node_type_cmp_cvthreshold(ntypelist);
 	register_node_type_cmp_cvxor(ntypelist);
-	register_node_type_cmp_cvxors(ntypelist);
 	register_node_type_cmp_image2cvimage(ntypelist);
 }
 

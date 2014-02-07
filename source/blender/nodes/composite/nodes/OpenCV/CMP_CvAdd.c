@@ -52,17 +52,8 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
     CompBuf *dst_buf;
 
     if (out[0]->hasoutput == 0) return;
-    if ((in[0]->data)&&(in[1]->data)) {
+    if ((in[0]->data)) {
         src1 = BOCV_IplImage_attach(in[0]->data);
-        src2 = BOCV_IplImage_attach(in[1]->data);
-        if (!BOCV_checkAreSameType(src1, src2)){
-            node->error= 1;
-            return;
-        }
-        if(!BOCV_checkSameNChannels(src1, src2)){
-            node->error= 1;
-            return;
-        }
         
         if (in[2]->data){
             mask = BOCV_Mask_attach(in[2]->data);
@@ -71,15 +62,36 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
                 return;
             }
         }
+        
+        //Create output
         dst_buf = dupalloc_compbuf(in[0]->data);
         dst = BOCV_IplImage_attach(dst_buf);
 
-        if (dst) {
+        
+        //If there are second input
+        if(in[1]->data){
+            src2 = BOCV_IplImage_attach(in[1]->data);
+            if (!BOCV_checkAreSameType(src1, src2)){
+                node->error= 1;
+                return;
+            }
+            if(!BOCV_checkSameNChannels(src1, src2)){
+                node->error= 1;
+                return;
+            }
             cvAdd(src1, src2, dst, mask);
-            out[0]->data = dst_buf;
+            BOCV_IplImage_detach(src2);
+        }else{
+            CvScalar s;
+            s.val[0]= (in[1]->vec[0]);
+            s.val[1]= (in[1]->vec[1]);
+            s.val[2]= (in[1]->vec[2]);
+            s.val[3]= 0;
+            cvAddS(src1, s, dst, mask);
         }
+        
+        out[0]->data = dst_buf;
         BOCV_IplImage_detach(src1);
-        BOCV_IplImage_detach(src2);
         BOCV_IplImage_detach(dst);
     }
 

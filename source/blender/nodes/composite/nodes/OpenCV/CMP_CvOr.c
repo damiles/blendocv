@@ -34,42 +34,74 @@
 
 
 static bNodeSocketTemplate cmp_node_cvOr_in[]= {
-	{	SOCK_OCV_ARR, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_OCV_ARR, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_OCV_ARR, 1, "Mask",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 1, "Mask",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvOr_out[]= {
-	{	SOCK_OCV_ARR, 0, "CvArr",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "CvArr",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 
 static void node_composit_exec_cvOr(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
-    //TODO: Use atach buffers
-	CvArr* dst;
+    CvArr* dst;
 	CvArr* src1;
 	CvArr* src2;
-	CvArr* mask;
-	CV_FUNCNAME( "cvOr" ); 
+	CvArr* mask=NULL;
+        CompBuf* dst_buf;
+
 	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
-	if((in[0]->data)&&(in[1]->data)){
-		CV_CALL(src1 = in[0]->data);
-		CV_CALL(src2 = in[1]->data);
-		if(!BOCV_checkAreSameType(src1, src2))
-		    CV_ERROR( CV_StsBadArg,"The source inputs are differents" );
-			
-		CV_CALL(mask = in[2]->data);
-		CV_CALL(dst=BOCV_CreateArrFrom(src1));
-		if(dst)		
-		{
-			CV_CALL(cvOr(src1, src2, dst, mask));
-		 	CV_CALL(out[0]->data= dst);
-		}
+	if((in[0]->data)){
+                //Inputs
+		src1 = BOCV_IplImage_attach(in[0]->data);
+                mask = BOCV_Mask_attach(in[2]->data);
+                
+                //Output
+                dst_buf=dupalloc_compbuf(in[0]->data);
+                dst=BOCV_IplImage_attach(dst_buf);
+
+                //Check Image - Mask sizes
+                if(mask){
+                    if (!BOCV_checkMask(src1, mask)){
+                        node->error= 1;
+                        return;
+                    }
+                }
+                
+                if(in[1]->data){
+                    src2 = BOCV_IplImage_attach(in[1]->data);
+                    //Checks
+                    //Check Image Sizes
+                    if(!BOCV_checkAreSameType(src1, src2)){
+                        node->error= 1;
+                        return;
+                    }
+                    //Check Image number Channels
+                    if(!BOCV_checkSameNChannels(src1, src2)){
+                        node->error= 1;
+                        return;
+                    }
+                    cvOr(src1, src2, dst, mask);
+                    BOCV_IplImage_detach(src2);
+                }else{
+                    CvScalar s;
+                    s.val[0]= (in[1]->vec[0]);
+                    s.val[1]= (in[1]->vec[1]);
+                    s.val[2]= (in[1]->vec[2]);
+                    s.val[3]= 0;
+                    cvOrS(src1, s, dst, mask);
+                }
+                
+                out[0]->data= dst_buf;
+		
+                BOCV_IplImage_detach(src1);
+                
+                BOCV_IplImage_detach(mask);
+                BOCV_IplImage_detach(dst);
+
 	}
-	__CV_END__;
 }
 
 

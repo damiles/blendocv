@@ -33,49 +33,49 @@
 
 
 /* **************** image2CvImage ******************** */
-static bNodeSocketTemplate cmp_node_cvNot_in[]= {
-	{	SOCK_OCV_ARR, 1, "CvArr",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvNot_in[] = {
+    { SOCK_RGBA, 1, "CvArr", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvNot_out[]= {
-	{	SOCK_OCV_ARR, 0, "CvArr",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvNot_out[] = {
+    { SOCK_RGBA, 0, "CvArr", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvNot(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
-	IplImage *src, *dst;
-	CompBuf *dst_buf;
-	
-	if(in[0]->data){
-            src= BOCV_IplImage_attach(in[0]->data);
-            dst_buf = dupalloc_compbuf(in[0]->data);
+static void node_composit_exec_cvNot(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
+    CvArr* dst;
+    CvArr* src1;
+    CompBuf *dst_buf;
 
-            if(out[0]->hasoutput==0) return;
+    if (out[0]->hasoutput == 0) return;
+    if ((in[0]->data)) {
+        //Get inputs
+        src1 = BOCV_IplImage_attach(in[0]->data);
+        
+        //Create output
+        dst_buf = dupalloc_compbuf(in[0]->data);
+        dst = BOCV_IplImage_attach(dst_buf);
+        
+        cvNot(src1, dst);
 
-            dst = BOCV_IplImage_attach(dst_buf);
+        //Output
+        out[0]->data = dst_buf;
 
-            cvNot(src,dst);
-
-            out[0]->data = dst_buf;
-
-            BOCV_IplImage_detach(src);
-            BOCV_IplImage_detach(dst);
-        }
-
+        //Release memory
+        BOCV_IplImage_detach(src1);
+        BOCV_IplImage_detach(dst);
+    }
 }
 
+void register_node_type_cmp_cvnot(ListBase *lb) {
+    static bNodeType ntype;
 
-void register_node_type_cmp_cvnot(ListBase *lb)
-{
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVNOT, "OpenCV - Not", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
-	node_type_socket_templates(&ntype,cmp_node_cvNot_in, cmp_node_cvNot_out);
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvNot);
-	
-	nodeRegisterType(lb, &ntype);
+    node_type_base(&ntype, CMP_NODE_CVNOT, "OpenCV - Not", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvNot_in, cmp_node_cvNot_out);
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvNot);
+
+    nodeRegisterType(lb, &ntype);
 }
 
 

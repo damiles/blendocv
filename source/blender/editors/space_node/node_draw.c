@@ -577,8 +577,10 @@ static void node_draw_basis(const bContext *C, ARegion *ar, SpaceNode *snode, bN
 	else
 		UI_ThemeColor(color_id);
         //header in red if error
-        if( node->new_node->error == 1) {
-            UI_ThemeColor(TH_REDALERT);
+        if(node->new_node){
+            if( node->new_node->error == 1) {
+                UI_ThemeColor(TH_REDALERT);
+            }
         }
 	
 	if(node->flag & NODE_MUTED)
@@ -676,20 +678,22 @@ static void node_draw_basis(const bContext *C, ARegion *ar, SpaceNode *snode, bN
 	}
         
         /* outline error emphasis */
-	if( node->new_node->error == 1) {
-		glEnable(GL_BLEND);
-		glEnable( GL_LINE_SMOOTH );
-			/* using different shades of TH_TEXT_HI for the empasis, like triangle */
-			UI_ThemeColor(TH_REDALERT);
-			uiSetRoundBox(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT | UI_CNR_BOTTOM_LEFT); // round all corners except lower right
-			uiDrawBox(GL_LINE_LOOP, rct->xmin, rct->ymin, rct->xmax, rct->ymax, BASIS_RAD);
-			
-		glDisable( GL_LINE_SMOOTH );
-		glDisable(GL_BLEND);
-                //ReportList *report=CTX_wm_reports(C);
-                //BKE_report(report, 1<<4,"Check console to get more info");
-                //uiPupMenuReports(C,report);
-	}
+        if(node->new_node){
+            if( node->new_node->error == 1) {
+                    glEnable(GL_BLEND);
+                    glEnable( GL_LINE_SMOOTH );
+                            /* using different shades of TH_TEXT_HI for the empasis, like triangle */
+                            UI_ThemeColor(TH_REDALERT);
+                            uiSetRoundBox(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT | UI_CNR_BOTTOM_LEFT); // round all corners except lower right
+                            uiDrawBox(GL_LINE_LOOP, rct->xmin, rct->ymin, rct->xmax, rct->ymax, BASIS_RAD);
+
+                    glDisable( GL_LINE_SMOOTH );
+                    glDisable(GL_BLEND);
+                    //ReportList *report=CTX_wm_reports(C);
+                    //BKE_report(report, 1<<4,"Check console to get more info");
+                    //uiPupMenuReports(C,report);
+            }
+        }
         
         /* disable lines */
 	if(node->flag & NODE_MUTED)

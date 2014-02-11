@@ -229,7 +229,7 @@ void register_node_type_cmp_group(ListBase *lb)
 
 /**** FOR LOOP ****/
 
-#if 0 /* XXX loop nodes don't work nicely with current trees */
+#if 1 /* XXX loop nodes don't work nicely with current trees */
 /* Move the results from the previous iteration back to the input sockets. */
 static void loop_iteration_reset(bNodeTree *ngroup, bNodeStack *gstack)
 {
@@ -249,8 +249,10 @@ static void loop_iteration_reset(bNodeTree *ngroup, bNodeStack *gstack)
 		if (gin && gout) {
 			nsin = node_get_socket_stack(gstack, gin);
 			nsout = node_get_socket_stack(gstack, gout);
-			
-			move_stack(nsin, nsout);
+			//If move stack we remove out data.. and nodes don't process
+			//move_stack(nsin, nsout);
+                        //Changed by copy stac
+                        copy_stack(nsin, nsout);
 			
 			gin=gin->next;
 			gout=gout->next;

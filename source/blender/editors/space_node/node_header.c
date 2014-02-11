@@ -284,9 +284,9 @@ static void node_menu_add(const bContext *C, Menu *menu)
                 uiItemMenuF(layout, "Machine learning", 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_OCV_MACHINELEARNING));
                 
                 uiItemMenuF(layout, IFACE_(N_("Group")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_GROUP));
-		uiItemMenuF(layout, IFACE_(N_("Layout")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_LAYOUT));
+                uiItemMenuF(layout, IFACE_(N_("Layout")), 0, node_add_menu, SET_INT_IN_POINTER(NODE_CLASS_LAYOUT));
                 //uiItemMenuF(layout, "OpenCV", 0, node_add_sub_menu_opencv, SET_INT_IN_POINTER(NODE_CLASS_OPENCV));
-                uiItemMenuF(layout, "OpenCV", 0, node_add_sub_menu_blender, SET_INT_IN_POINTER(NODE_CLASS_BLENDERSUB));
+                uiItemMenuF(layout, "Blender", 0, node_add_sub_menu_blender, SET_INT_IN_POINTER(NODE_CLASS_BLENDERSUB));
                 
 	}
 	else if(snode->treetype==NTREE_TEXTURE) {

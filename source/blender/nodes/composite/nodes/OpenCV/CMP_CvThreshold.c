@@ -34,7 +34,7 @@
 static bNodeSocketTemplate cmp_node_cvThreshold_in[]= {
 	{	SOCK_RGBA, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	SOCK_FLOAT, 1, "Threshold",			0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "Max Value",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_FLOAT, 1, "Max Value",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 30.0f},
 	{	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvThreshold_out[]= {

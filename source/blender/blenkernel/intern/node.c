@@ -1773,7 +1773,7 @@ static void registerCompositNodes(ListBase *ntypelist)
 	register_node_type_frame(ntypelist);
 	
 	register_node_type_cmp_group(ntypelist);
-//	register_node_type_cmp_forloop(ntypelist);
+	register_node_type_cmp_forloop(ntypelist);
 //	register_node_type_cmp_whileloop(ntypelist);
 	
 	register_node_type_cmp_rlayers(ntypelist);

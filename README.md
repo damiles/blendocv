@@ -2,7 +2,7 @@
 
 Important note
 --------------
-**lease be patient.** There are a lot of work to do before i release first beta versions and a how to compile BlendOCV. 
+**Please be patient.** There are a lot of work to do before i release first beta versions and a how to compile BlendOCV. 
 I know that there are a lot of people that want compile and test blendOCV but now there are only few nodes and we are working in make it stable and creating hundred of nodes for you.
 My wish is share a first beta in mid-march.
 

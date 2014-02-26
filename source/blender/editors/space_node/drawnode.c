@@ -1681,6 +1681,11 @@ static void node_composit_buts_cvthreshold(uiLayout *layout, bContext *UNUSED(C)
 	uiItemR(layout, ptr, "cvthreshold_type", 0, "", ICON_NONE);
 }
 
+static void node_composit_buts_cvcanny(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{ 
+	uiItemR(layout, ptr, "cvcanny_type", 0, "", ICON_NONE);
+}
+
 /* only once called */
 static void node_composit_set_butfunc(bNodeType *ntype)
 {
@@ -1833,6 +1838,9 @@ static void node_composit_set_butfunc(bNodeType *ntype)
 			break;
                 case CMP_NODE_CVTHRESHOLD:
 			ntype->uifunc=node_composit_buts_cvthreshold;
+			break;
+                case CMP_NODE_CVCANNY:
+			ntype->uifunc=node_composit_buts_cvcanny;
 			break;
 	}
 	if (ntype->uifuncbut == NULL) ntype->uifuncbut = ntype->uifunc;

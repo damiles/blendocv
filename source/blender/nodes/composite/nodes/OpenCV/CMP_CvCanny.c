@@ -48,7 +48,7 @@ static void node_composit_exec_cvCanny(void *data, bNode *node, bNodeStack **in,
 {
 	int w,h,aperture;
 	float thresh1, thresh2;
-        IplImage *img, *edge, *grey;
+        IplImage *img, *edge, *s8boutput, *s8binput;
         CompBuf* dst_buf;
 
 	if(out[0]->hasoutput==0) return;
@@ -62,10 +62,10 @@ static void node_composit_exec_cvCanny(void *data, bNode *node, bNodeStack **in,
 
             switch(node->custom1){
                     case 0:
-                      aperture=3;
+                      aperture=1;
                       break;
                     case 1:
-                      aperture=1;
+                      aperture=3;
                       break;
                     case 2:
                       aperture=5;
@@ -73,34 +73,52 @@ static void node_composit_exec_cvCanny(void *data, bNode *node, bNodeStack **in,
                     case 3:
                       aperture=7;
                       break;
-                    case 4:
-                      aperture=9;
-                      break;
+
             }
-            /* Must implement all converts*/
-            /* now only rgb to gray*/
+            //Only accept 1 channel image
+            if(img->nChannels!=1){
+                node->error= 1;
+                return;
+            }
+            
             dst_buf=alloc_compbuf(w,h,CB_VAL,1);
             edge = BOCV_IplImage_attach(dst_buf);
+            
+            //Convert 8-bit
+            s8binput = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+            cvConvertScale(img, s8binput,255,0);
+            
+            s8boutput = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+            
+            cvCanny(s8binput, s8boutput, thresh1, thresh2, aperture);
 
-            grey = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
-            cvCvtColor(img,grey, CV_BGR2GRAY);
-            cvCanny(grey, edge, thresh1, thresh2, aperture);
-
+            //Convert 8bit output to float because blender only support float sockets
+            cvConvertScale(s8boutput, edge,1.0/255.0,0);
+            
             out[0]->data= dst_buf;
-
-            BOCV_IplImage_detach(grey);
+            
+            generate_preview(data, node, dst_buf);
+            
+            BOCV_IplImage_detach(s8binput);
+            BOCV_IplImage_detach(s8boutput);
             BOCV_IplImage_detach(edge);
             BOCV_IplImage_detach(img);
 	}
+}
+
+static void node_composit_init_cvcanny(bNodeTree *UNUSED(ntree), bNode* node, bNodeTemplate *UNUSED(ntemp))
+{
+	node->custom1= 1;
 }
 
 void register_node_type_cmp_cvcanny(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVCANNY, "OpenCV - Canny", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVCANNY, "OpenCV - Canny", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCanny_in, cmp_node_cvCanny_out);
 	node_type_size(&ntype, 150, 80, 250);
+        node_type_init(&ntype, node_composit_init_cvcanny);
 	node_type_exec(&ntype, node_composit_exec_cvCanny);
 	
 	nodeRegisterType(lb, &ntype);

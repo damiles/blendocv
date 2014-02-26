@@ -2432,6 +2432,23 @@ static void def_cmp_bocv_threshold(StructRNA *srna)
 	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
 }
 
+static void def_cmp_bocv_canny(StructRNA *srna)
+{
+	PropertyRNA *prop;
+	static EnumPropertyItem threshold_items[] = {
+		{0, "1",   0, "1",   ""},
+		{1, "3",   0, "3",   ""},
+		{2, "5", 0, "5", ""},
+                {3, "7", 0, "7", ""},
+		{0, NULL, 0, NULL, NULL}};
+	
+	prop = RNA_def_property(srna, "cvcanny_type", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "custom1");
+	RNA_def_property_enum_items(prop, threshold_items);
+	RNA_def_property_ui_text(prop, "Type", "Aperture Size");
+	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
+}
+
 /* -- Texture Nodes --------------------------------------------------------- */
 
 static void def_tex_output(StructRNA *srna)

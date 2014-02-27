@@ -42,7 +42,8 @@ static bNodeSocketTemplate cmp_node_cvCvtColor_out[]= {
 static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
 	int w,h;
-	
+	CompBuf *output;
+        
 	if(in[0]->data){
 		IplImage *img, *gray;	
 		img=BOCV_IplImage_attach(in[0]->data);
@@ -54,7 +55,7 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
 		
 		/* Must implement all converts*/
 		/* now only rgb to gray*/
-		CompBuf *output= alloc_compbuf(w,h, 1, 1);
+		output= alloc_compbuf(w,h, 1, 1);
                 gray = BOCV_IplImage_attach(output);
                 //gray = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
 		

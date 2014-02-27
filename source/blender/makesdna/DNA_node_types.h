@@ -37,7 +37,7 @@
 #include "DNA_ID.h"
 #include "DNA_vec_types.h"
 #include "DNA_listBase.h"
-#include <cv.h>
+//#include <cv.h>
 
 struct ID;
 struct ListBase;
@@ -320,7 +320,7 @@ typedef struct bNodeSocketValueVector {
 typedef struct bNodeSocketValueRGBA {
 	float value[4];
 } bNodeSocketValueRGBA;
-
+/*
 typedef struct bNodeSocketValueCvPoint {
     CvPoint value;
 } bNodeSocketValueCvPoint;
@@ -328,7 +328,7 @@ typedef struct bNodeSocketValueCvPoint {
 typedef struct bNodeSocketValueCvImage {
     IplImage value;
 } bNodeSocketValueCvImage;
-
+*/
 
 /* data structs, for node->storage */
 

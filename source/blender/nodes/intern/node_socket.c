@@ -158,35 +158,7 @@ static bNodeSocketType node_socket_type_mesh = {
 	/* buttonfunc */		NULL,
 };
 
-/****************** POINT ******************/
 
-static bNodeSocketType node_socket_type_point = {
-	/* type */				SOCK_OCV_POINT,
-	/* ui_name */			"Point",
-	/* ui_description */	"Opencv 2d point",
-	/* ui_icon */			0,
-	/* ui_color */			{17,133,37,255},
-
-	/* value_structname */	"bNodeSocketValueCvPoint",
-	/* value_structsize */	sizeof(bNodeSocketValueCvPoint),
-
-	/* buttonfunc */		NULL,
-};
-
-/****************** OpenCV Image ******************/
-
-static bNodeSocketType node_socket_type_ocvimage = {
-	/* type */				SOCK_OCV_IMAGE,
-	/* ui_name */			"Image",
-	/* ui_description */	"Opencv image",
-	/* ui_icon */			0,
-	/* ui_color */			{17,133,37,255},
-
-	/* value_structname */	"bNodeSocketValueCvImage",
-	/* value_structsize */	sizeof(bNodeSocketValueCvImage),
-
-	/* buttonfunc */		NULL,
-};
 
 void node_socket_type_init(bNodeSocketType *types[])
 {
@@ -199,8 +171,8 @@ void node_socket_type_init(bNodeSocketType *types[])
 	INIT_TYPE(boolean);
 	INIT_TYPE(shader);
 	INIT_TYPE(mesh);
-        INIT_TYPE(point);
-        INIT_TYPE(ocvimage);
+        //INIT_TYPE(point);
+        //INIT_TYPE(ocvimage);
         
 	
 	#undef INIT_TYPE

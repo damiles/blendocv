@@ -409,11 +409,13 @@ static int setExecutableNodes(bNodeTreeExec *exec, ThreadData *thd)
 					free_compbuf(nsout[a]->data);
 					nsout[a]->data= NULL;
 				}
-                                if(nsout[a]->data && nsout[a]->sockettype == 7) { //ToDo: damiles IplImage
+                                /*
+                                 s* Actually all data goes with compbuf and no use opencv data structs
+                                 if(nsout[a]->data && nsout[a]->sockettype == 7) { //ToDo: damiles IplImage
                                     IplImage* ipl_img=nsout[a]->data;
                                     cvReleaseImage(&ipl_img);
                                     nsout[a]->data= NULL;
-                                }
+                                }*/
 			}
 			totnode++;
 			/* printf("node needs exec %s\n", node->name); */

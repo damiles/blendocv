@@ -6141,7 +6141,7 @@ static int deferred_register_prop(StructRNA *srna, PyObject *key, PyObject *item
 {
 	/* We only care about results from C which
 	 * are for sure types, save some time with error */
-	if (pyrna_is_deferred_prop(item)) {
+	if (item!=NULL && pyrna_is_deferred_prop(item)) {
 
 		PyObject *py_func, *py_kw, *py_srna_cobject, *py_ret;
 

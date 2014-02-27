@@ -47,14 +47,14 @@ static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack *
 //TODO: Use atach buffers
 	float thresh, max_value;	
 	IplImage *image, *threshold_img;
-	
+	CompBuf *output;
         if (in[0]->data) {
             image=BOCV_IplImage_attach(in[0]->data);
 
             if(image==NULL)//Check if there are image input
                 return;
 
-            CompBuf *output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
+            output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
             threshold_img = BOCV_IplImage_attach(output);
 
             //threshold_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);

@@ -39,10 +39,14 @@ CvArr* BOCV_CreateArrFrom(void* src)
 	//Here need code to mat and sequence...
 	return NULL;
 }
+void BOCV_report(const char *message){
+        printf("[BOCV Error]: %s\n", message);
+        fflush(stdout); /* this ensures the message is printed before a crash */
+}
 int BOCV_checkSameNChannels(void* src1, void* src2){
     if(CV_IS_IMAGE(src1) && CV_IS_IMAGE(src2)){
         if(((IplImage*)src1)->nChannels != ((IplImage*)src2)->nChannels ){
-                BKE_report(NULL, 1<<4,"Inputs have different num channels");
+                BOCV_report("Inputs have different num channels");
                 return 0;	
         }
         return 1;
@@ -56,7 +60,7 @@ int BOCV_checkMask(void* src1, void* mask){
     }
     if(CV_IS_IMAGE(mask)){
             if(((IplImage*)mask)->nChannels!=1){
-                BKE_report(NULL, 1<<4,"Mask must be 1 channel, please convert to gray");
+                BOCV_report("Mask must be 1 channel, please convert to gray");
                 return 0;
             }
     }
@@ -69,21 +73,21 @@ int BOCV_checkAreSameType(void* src1,void* src2 )
 			IplImage* isrc1=(IplImage*) src1;
 			IplImage* isrc2=(IplImage*) src2;
 			if(isrc1->width != isrc2->width){
-                                BKE_report(NULL, 1<<4,"Inputs have different sizes");
+                                BOCV_report("Inputs have different sizes");
                 		return 0;
                         }
 			if(isrc1->height != isrc2->height){
-                                BKE_report(NULL, 1<<4,"Inputs have different sizes");
+                                BOCV_report("Inputs have different sizes");
                                 return 0;	
                         }
                         return 1;
 		}else{
 			return 0;
-                        BKE_report(NULL, 1<<4,"Src2 is not an image");
+                        BOCV_report("Src2 is not an image");
 		}
 		
 	}
-        BKE_report(NULL, 1<<4,"Src1 is not an image");
+        BOCV_report("Src1 is not an image");
 	//Here need code to mat and sequence...
 	return 0;
 }

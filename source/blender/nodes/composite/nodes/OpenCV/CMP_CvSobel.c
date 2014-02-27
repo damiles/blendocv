@@ -46,7 +46,8 @@ static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in,
     //TODO: Use atach buffers
     int x, y, aperture;
     IplImage *image, *sobel_img;
-
+    CompBuf *output;
+    
     if (out[0]->hasoutput == 0) return;
 
     if (in[0]->data) {
@@ -72,7 +73,7 @@ static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in,
         if (image == NULL)//Check if there are image input
             return;
         
-        CompBuf *output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
+        output= alloc_compbuf(image->width,image->height, image->nChannels, 1);
         sobel_img = BOCV_IplImage_attach(output);
         
         //sobel_img= BOCV_Alloc_IplImage(image->width,image->height, image->nChannels,output);

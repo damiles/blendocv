@@ -2441,7 +2441,7 @@ static void def_cmp_bocv_threshold(StructRNA *srna)
 static void def_cmp_bocv_canny(StructRNA *srna)
 {
 	PropertyRNA *prop;
-	static EnumPropertyItem threshold_items[] = {
+	static EnumPropertyItem canny_items[] = {
 		{0, "1",   0, "1",   ""},
 		{1, "3",   0, "3",   ""},
 		{2, "5", 0, "5", ""},
@@ -2450,8 +2450,36 @@ static void def_cmp_bocv_canny(StructRNA *srna)
 	
 	prop = RNA_def_property(srna, "cvcanny_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "custom1");
-	RNA_def_property_enum_items(prop, threshold_items);
+	RNA_def_property_enum_items(prop, canny_items);
 	RNA_def_property_ui_text(prop, "Type", "Aperture Size");
+	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
+}
+
+static void def_cmp_bocv_cvtcolor(StructRNA *srna)
+{
+	PropertyRNA *prop;
+	static EnumPropertyItem color_items[] = {
+		{7, "CV_RGB2GRAY",   0, "RGB -> GRAY",   ""},
+		{8, "CV_GRAY2RGB",   0, "GRAY -> RGB",   ""},
+		{41, "CV_RGB2HSV",   0, "RGB -> HSV", ""},
+                {55, "CV_HSV2RGB",   0, "HSV -> RGB", ""},
+                {69, "CV_RGB2HLS",   0, "RGB -> HLS", ""},
+                {73, "CV_HLS2RGB",   0, "HLS -> RGB", ""},
+                {45, "CV_RGB2Lab",   0, "RGB -> Lab", ""},
+                {57, "CV_Lab2RGB",   0, "Lab -> RGB", ""},
+                {51, "CV_RGB2Luv",   0, "RGB -> Luv", ""},
+                {59, "CV_Luv2RGB",   0, "Luv -> RGB", ""},
+                {48, "CV_BayerBG2RGB",   0, "BayerBG -> RGB", ""},
+                {49, "CV_BayerGB2RGB",   0, "BayerGB -> RGB", ""},
+                {46, "CV_BayerRG2RGB",   0, "BayerRG -> RGB", ""},
+                {47, "CV_BayerGR2RGB",   0, "BayerGR -> RGB", ""},
+                
+		{0, NULL, 0, NULL, NULL}};
+	
+	prop = RNA_def_property(srna, "cvcvtcolor_type", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "custom1");
+	RNA_def_property_enum_items(prop, color_items);
+	RNA_def_property_ui_text(prop, "Type", "Color Space conversion");
 	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
 }
 

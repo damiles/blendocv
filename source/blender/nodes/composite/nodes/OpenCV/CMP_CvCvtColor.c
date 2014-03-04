@@ -45,7 +45,7 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
 	CompBuf *output;
         
 	if(in[0]->data){
-		IplImage *img, *gray;	
+		IplImage *img, *cvt;	
 		img=BOCV_IplImage_attach(in[0]->data);
 		if(img==NULL)//Check if there are image input
                     return;
@@ -53,14 +53,51 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
 		w=img->width;
 		h=img->height;
 		
-		/* Must implement all converts*/
-		/* now only rgb to gray*/
-		output= alloc_compbuf(w,h, 1, 1);
-                gray = BOCV_IplImage_attach(output);
-                //gray = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
-		
-		cvCvtColor(img, gray, CV_BGRA2GRAY);
+		if( node->custom1!=8 && 
+                    node->custom1 != 46 &&
+                    node->custom1 != 47 &&
+                    node->custom1 != 48 &&
+                    node->custom1 != 49 &&
+                    img->nChannels < 3){
+                    
+                    node->error= 1;
+                    BOCV_report("Input image must be 3 or 4 channels");
+                    return;
+                }
+                if( (node->custom1 ==8 || 
+                    node->custom1  == 46 ||
+                    node->custom1  == 47 ||
+                    node->custom1  == 48 ||
+                    node->custom1  == 49) && 
+                    img->nChannels!=1){
+                    node->error= 1;
+                    BOCV_report("Input image must be 1 channel for GRAY -> RGB");
+                    return;
+                }
+                if(node->custom1==7)
+                    output= alloc_compbuf(w,h, 1, 1);
+                else
+                    output= alloc_compbuf(w,h, 3, 1);
+                
+                cvt = BOCV_IplImage_attach(output);
+                
+                if(node->custom1>=46) //Bayer nodes
+                {
+                    IplImage *s8boutput, *s8binput;
+                    //Convert 8-bit
+                    s8binput = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 1);
+                    cvConvertScale(img, s8binput,255,0);
 
+                    s8boutput = cvCreateImage(cvSize(w,h), IPL_DEPTH_8U, 3);
+                    
+                    cvCvtColor(s8binput, s8boutput, node->custom1);
+                    
+                    //Convert 8bit output to float because blender only support float sockets
+                    cvConvertScale(s8boutput, cvt,1.0/255.0,0);
+                    
+                }else{
+                        cvCvtColor(img, cvt, node->custom1);
+                }
 		generate_preview(data, node, output);
                 
                 if(out[0]->hasoutput==0) return;
@@ -68,6 +105,10 @@ static void node_composit_exec_cvCvtColor(void *data, bNode *node, bNodeStack **
 	}
 }
 
+static void node_composit_init_cvCvtColor(bNodeTree *UNUSED(ntree), bNode* node, bNodeTemplate *UNUSED(ntemp))
+{
+	node->custom1= 7;
+}
 
 void register_node_type_cmp_cvcvtcolor(ListBase *lb)
 {
@@ -76,6 +117,7 @@ void register_node_type_cmp_cvcvtcolor(ListBase *lb)
 	node_type_base(&ntype, CMP_NODE_CVCVTCOLOR, "OpenCV - Convert color", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCvtColor_in, cmp_node_cvCvtColor_out);
 	node_type_size(&ntype, 150, 80, 250);
+        node_type_init(&ntype, node_composit_init_cvCvtColor);
 	node_type_exec(&ntype, node_composit_exec_cvCvtColor);
 	
 	nodeRegisterType(lb, &ntype);

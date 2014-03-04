@@ -90,6 +90,7 @@ int BOCV_checkMask(void* src1, void* mask);
 IplImage *BOCV_IplImage_attach(CompBuf *cbuf);
 IplImage *BOCV_Mask_attach(CompBuf *cbuf);
 void BOCV_IplImage_detach(IplImage *img);
+void BOCV_report(const char *message);
 /*IplImage *BOCV_Socket_IplImage(bNodeStack *in);
 IplImage *BOCV_Alloc_IplImage(int x, int y, int type, CompBuf* cbuf);*/
 #endif

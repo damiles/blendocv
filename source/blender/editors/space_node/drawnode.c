@@ -1687,6 +1687,11 @@ static void node_composit_buts_cvcanny(uiLayout *layout, bContext *UNUSED(C), Po
 	uiItemR(layout, ptr, "cvcanny_type", 0, "", ICON_NONE);
 }
 
+static void node_composit_buts_cvcvtcolor(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{ 
+	uiItemR(layout, ptr, "cvcvtcolor_type", 0, "", ICON_NONE);
+}
+
 /* only once called */
 static void node_composit_set_butfunc(bNodeType *ntype)
 {
@@ -1842,6 +1847,9 @@ static void node_composit_set_butfunc(bNodeType *ntype)
 			break;
                 case CMP_NODE_CVCANNY:
 			ntype->uifunc=node_composit_buts_cvcanny;
+			break;
+                case CMP_NODE_CVCVTCOLOR:
+			ntype->uifunc=node_composit_buts_cvcvtcolor;
 			break;
 	}
 	if (ntype->uifuncbut == NULL) ntype->uifuncbut = ntype->uifunc;

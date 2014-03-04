@@ -122,8 +122,8 @@ option(WITH_PYTHON_MODULE "Enable building as a python module (experemental, onl
 option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" ON)
 option(WITH_IK_ITASC      "Enable ITASC IK solver (only disable for development & for incompatible C++ compilers)" ON)
 option(WITH_FFTW3         "Enable FFTW3 support (Used for smoke and audio effects)" OFF)
-option(WITH_BULLET        "Enable Bullet (Physics Engine)" ON)
-option(WITH_GAMEENGINE    "Enable Game Engine" ON)
+option(WITH_BULLET        "Enable Bullet (Physics Engine)" OFF)
+option(WITH_GAMEENGINE    "Enable Game Engine" OFF)
 option(WITH_PLAYER        "Build Player" OFF)
 
 # GHOST Windowing Library Options
@@ -157,8 +157,8 @@ else()
 endif()
 
 # Modifiers
-option(WITH_MOD_FLUID        	"Enable Elbeem Modifier (Fluid Simulation)" ON)
-option(WITH_MOD_SMOKE        	"Enable Smoke Modifier (Smoke Simulation)" ON)
+option(WITH_MOD_FLUID        	"Enable Elbeem Modifier (Fluid Simulation)" OFF)
+option(WITH_MOD_SMOKE        	"Enable Smoke Modifier (Smoke Simulation)" OFF)
 option(WITH_MOD_DECIMATE       	"Enable Decimate Modifier" ON)
 option(WITH_MOD_BOOLEAN        	"Enable Boolean Modifier" ON)
 option(WITH_MOD_CLOTH_ELTOPO   	"Enable Experemental cloth solver" OFF)

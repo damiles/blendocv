@@ -1679,6 +1679,7 @@ static void node_composit_buts_ycc(uiLayout *layout, bContext *UNUSED(C), Pointe
 static void node_composit_buts_cvthreshold(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 { 
 	uiItemR(layout, ptr, "cvthreshold_type", 0, "", ICON_NONE);
+        uiItemR(layout, ptr, "use_otsu", 0, NULL, ICON_NONE);
 }
 
 static void node_composit_buts_cvcanny(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)

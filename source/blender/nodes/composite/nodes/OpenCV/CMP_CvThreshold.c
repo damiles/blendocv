@@ -39,16 +39,22 @@ static bNodeSocketTemplate cmp_node_cvThreshold_in[]= {
 };
 static bNodeSocketTemplate cmp_node_cvThreshold_out[]= {
 	{	SOCK_RGBA, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+        {	SOCK_FLOAT, 0, "Outsu value",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
 	{	-1, 0, ""	}
 };
 
 static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
-//TODO: Use atach buffers
 	float thresh, max_value;	
 	IplImage *image, *threshold_img;
 	CompBuf *output;
+        IplImage *s8boutput, *s8binput;
+        double outputOtsu=0.0;
+        
+        if(out[0]->hasoutput==0) return;
+        
         if (in[0]->data) {
+            
             image=BOCV_IplImage_attach(in[0]->data);
 
             if(image==NULL)//Check if there are image input
@@ -60,15 +66,38 @@ static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack *
             //threshold_img= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,image->nChannels);
             thresh=in[1]->vec[0];
             max_value=in[2]->vec[0];
-            cvThreshold(image,threshold_img,thresh,max_value,node->custom1);
+            
+            if(node->custom2!=0){
+                //Only accept 1 channel image
+                if(image->nChannels!=1){
+                    node->error= 1;
+                    return;
+                }
+                //We need to convert to 8U for OTSU
+                //Convert 8-bit
+                s8binput = cvCreateImage(cvSize(image->width,image->height), IPL_DEPTH_8U, image->nChannels);
+                cvConvertScale(image, s8binput,255,0);
+
+                s8boutput = cvCreateImage(cvSize(image->width,image->height), IPL_DEPTH_8U, image->nChannels);
+
+                //Make Threshold
+                outputOtsu=cvThreshold(s8binput,s8boutput,thresh,max_value,node->custom1 | CV_THRESH_OTSU);
+                
+                //Convert 8bit output to float because blender only support float sockets
+                cvConvertScale(s8boutput, threshold_img,1,0);
+                
+            }else
+                cvThreshold(image,threshold_img,thresh,max_value,node->custom1);
 
             generate_preview(data, node, output);
 
             BOCV_IplImage_detach(image);
             BOCV_IplImage_detach(threshold_img);
 
-            if(out[0]->hasoutput==0) return;
+            
+            
             out[0]->data= output;
+            out[1]->vec[0]= outputOtsu/255.0;
         }
 
 }
@@ -76,6 +105,8 @@ static void node_composit_exec_cvThreshold(void *data, bNode *node, bNodeStack *
 static void node_composit_init_cvthreshold(bNodeTree *UNUSED(ntree), bNode* node, bNodeTemplate *UNUSED(ntemp))
 {
 	node->custom1= 0;
+        //For otsu check
+        node->custom2= 0;
 }
 
 void register_node_type_cmp_cvthreshold(ListBase *lb)

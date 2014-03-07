@@ -99,8 +99,11 @@ static struct bNodeStack *setup_stack(bNodeStack *stack, bNodeSocket *sock)
 	if (sock->default_value) {
 		switch (sock->type) {
 		case SOCK_FLOAT:
-			ns->vec[0] = ((bNodeSocketValueFloat*)sock->default_value)->value;
+                	ns->vec[0] = ((bNodeSocketValueFloat*)sock->default_value)->value;
 			break;
+                case SOCK_INT:
+                    ns->vec[0] = ((bNodeSocketValueInt*)sock->default_value)->value;
+                    break;
 		case SOCK_VECTOR:
 			copy_v3_v3(ns->vec, ((bNodeSocketValueVector*)sock->default_value)->value);
 			break;
@@ -113,6 +116,9 @@ static struct bNodeStack *setup_stack(bNodeStack *stack, bNodeSocket *sock)
 		switch (sock->type) {
 		case SOCK_FLOAT:
 			ns->vec[0] = 0.0f;
+			break;
+                case SOCK_INT:
+                        ns->vec[0] = 0.0f;
 			break;
 		case SOCK_VECTOR:
 			copy_v3_v3(ns->vec, null_value);

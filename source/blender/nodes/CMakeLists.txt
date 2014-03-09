@@ -116,7 +116,6 @@ set(SRC
 	composite/nodes/OpenCV/CMP_CvGravityCenter.c
 	composite/nodes/OpenCV/CMP_CvHarris.c
 	composite/nodes/OpenCV/CMP_CvHough.c
-	composite/nodes/OpenCV/CMP_CvImage2image.c
 	composite/nodes/OpenCV/CMP_CvLaplace.c
 	composite/nodes/OpenCV/CMP_CvMult.c
 	composite/nodes/OpenCV/CMP_CvNegative.c
@@ -129,7 +128,7 @@ set(SRC
 	composite/nodes/OpenCV/CMP_CvSub.c
 	composite/nodes/OpenCV/CMP_CvThreshold.c
 	composite/nodes/OpenCV/CMP_CvXor.c
-	composite/nodes/OpenCV/CMP_image2CvImage.c
+        composite/nodes/OpenCV/CMP_GetStructuringElement.c
 	composite/BOCV_util.c
 
 	shader/nodes/node_shader_camera.c

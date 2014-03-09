@@ -132,7 +132,6 @@ void register_node_type_cmp_cverode(ListBase *lb);
 void register_node_type_cmp_cvgravitycenter(ListBase *lb);
 void register_node_type_cmp_cvharris(ListBase *lb);
 void register_node_type_cmp_cvhough(ListBase *lb);
-void register_node_type_cmp_cvimage2image(ListBase *lb);
 void register_node_type_cmp_cvlaplace(ListBase *lb);
 void register_node_type_cmp_cvmult(ListBase *lb);
 void register_node_type_cmp_cvnegative(ListBase *lb);
@@ -145,6 +144,6 @@ void register_node_type_cmp_cvsobel(ListBase *lb);
 void register_node_type_cmp_cvsub(ListBase *lb);
 void register_node_type_cmp_cvthreshold(ListBase *lb);
 void register_node_type_cmp_cvxor(ListBase *lb);
-void register_node_type_cmp_image2cvimage(ListBase *lb);
+void register_node_type_cmp_getStructuringElement(ListBase *lb);
 
 #endif

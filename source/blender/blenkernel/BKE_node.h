@@ -586,8 +586,6 @@ void			ntreeGPUMaterialNodes(struct bNodeTree *ntree, struct GPUMaterial *mat);
 #define CMP_NODE_LENSDIST	303
 
 #define CMP_NODE_CVPOINT        801
-#define CMP_NODE_IMAGE2CVIMAGE  802
-#define CMP_NODE_CVIMAGE2IMAGE  803
 #define CMP_NODE_CVCVTCOLOR     804
 #define CMP_NODE_CVCANNY        805
 #define CMP_NODE_CVNOT          806
@@ -642,6 +640,8 @@ void			ntreeGPUMaterialNodes(struct bNodeTree *ntree, struct GPUMaterial *mat);
 #define CMP_NODE_CVPOLYLINE      852
 #define CMP_NODE_CVPUTTEXT       853
 #define CMP_NODE_CVRECTANGLE     854
+
+#define CMP_NODE_CVGETSTRUCTURINGELEMENT     854
 
 /* channel toggles */
 #define CMP_CHAN_RGB		1

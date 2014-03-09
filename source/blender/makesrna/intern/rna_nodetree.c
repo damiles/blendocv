@@ -2483,6 +2483,22 @@ static void def_cmp_bocv_cvtcolor(StructRNA *srna)
 	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
 }
 
+static void def_cmp_bocv_getstructuringelement(StructRNA *srna)
+{
+	PropertyRNA *prop;
+	static EnumPropertyItem shape_items[] = {
+		{0, "RECT",   0, "Rect",   ""},
+		{1, "CROSS",   0, "Cross",   ""},
+		{2, "ELLIPSE", 0, "Ellipse", ""},
+		{0, NULL, 0, NULL, NULL}};
+	
+	prop = RNA_def_property(srna, "cvgetstructuringelement_type", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "custom1");
+	RNA_def_property_enum_items(prop, shape_items);
+	RNA_def_property_ui_text(prop, "Type", "Shape element");
+	RNA_def_property_update(prop, NC_NODE|NA_EDITED, "rna_Node_update");
+        	
+}
 /* -- Texture Nodes --------------------------------------------------------- */
 
 static void def_tex_output(StructRNA *srna)

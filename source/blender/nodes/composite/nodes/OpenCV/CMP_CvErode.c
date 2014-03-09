@@ -32,35 +32,54 @@
 
 
 static bNodeSocketTemplate cmp_node_cvErode_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "Image",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 1, "Image",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	SOCK_INT, 1, "Iterations",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
-	{	-1, 0, ""	}
+	{ SOCK_FLOAT, 1, "Structuring element", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
+        {	-1, 0, ""	}
 };
 static bNodeSocketTemplate cmp_node_cvErode_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "Image",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+	{	SOCK_RGBA, 0, "Image",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
 	{	-1, 0, ""	}
 };
 
 static void node_composit_exec_cvErode(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
 {
-	int iterations;	
-	IplImage *src, *dst;
-	CompBuf *dst_buf;
+	int iterations;
+    IplImage *image, *dst;
+    IplConvKernel *kernel;
+    CompBuf* dst_buf;
+    int *valuesKernel, i;
+    
+    if (out[0]->hasoutput == 0) return;
 
-	if(in[0]->hasinput==0) return;
-	if(out[0]->hasoutput==0) return;
+    if (in[0]->data) {
 
-	src= BOCV_IplImage_attach(in[0]->data);
-	dst_buf = dupalloc_compbuf(in[0]->data);
-	iterations=(int)in[1]->vec[0];
-	dst = BOCV_IplImage_attach(dst_buf);
-
-	cvErode(src,dst,0,iterations);
-
-	out[0]->data = dst_buf;
-
-	BOCV_IplImage_detach(src);
-	BOCV_IplImage_detach(dst);
+        image = BOCV_IplImage_attach(in[0]->data);
+        dst_buf = alloc_compbuf(image->width, image->height, image->nChannels, 1);
+        dst = BOCV_IplImage_attach(dst_buf);
+        iterations = (int) in[1]->vec[0];
+        if (in[2]->data) {
+                CompBuf* kernel_buf= in[2]->data;
+                valuesKernel= malloc(kernel_buf->x*kernel_buf->y * sizeof(int));
+                //Convert kernel to float array buf to send via socket
+                for(i=0; i< kernel_buf->x*kernel_buf->y; i++){
+                    valuesKernel[i]= (int)kernel_buf->rect[i];
+                }
+                kernel= cvCreateStructuringElementEx(
+                        kernel_buf->x, 
+                        kernel_buf->y, 
+                        kernel_buf->x/2, 
+                        kernel_buf->y/2, 
+                        CV_SHAPE_CUSTOM, 
+                        valuesKernel );
+                cvErode(image, dst, kernel, iterations);
+        }else
+            cvErode(image, dst, 0, iterations);
+        out[0]->data = dst_buf;
+        
+        BOCV_IplImage_detach(dst);
+        BOCV_IplImage_detach(image);
+    }
 
 
 }

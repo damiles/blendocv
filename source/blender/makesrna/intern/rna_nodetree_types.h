@@ -123,6 +123,7 @@ DefNode( CompositorNode, CMP_NODE_HUECORRECT,     def_cmp_huecorrect,     "HUECO
 DefNode( CompositorNode, CMP_NODE_CVTHRESHOLD,    def_cmp_bocv_threshold, "CVTHRESHOLD",     CvThreshold,     "OpenCV - Threshold",             "" )
 DefNode( CompositorNode, CMP_NODE_CVCANNY,        def_cmp_bocv_canny,     "CVCANNY",         CvCanny,         "OpenCV - Canny",                 "" )
 DefNode( CompositorNode, CMP_NODE_CVCVTCOLOR,     def_cmp_bocv_cvtcolor,  "CVCVTCOLOR",      CvColor,         "OpenCV - Convert color",         "" )
+DefNode( CompositorNode, CMP_NODE_CVGETSTRUCTURINGELEMENT,     def_cmp_bocv_getstructuringelement,  "CVGETSTRUCTURINGELEMENT",      CvGetStructuringElement,         "OpenCV - Get Structuring element",         "" )
                                                                                                                                           
 DefNode( TextureNode,    TEX_NODE_OUTPUT,         def_tex_output,         "OUTPUT",         Output,           "Output",            ""              )
 DefNode( TextureNode,    TEX_NODE_CHECKER,        0,                      "CHECKER",        Checker,          "Checker",           ""              )

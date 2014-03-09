@@ -1692,6 +1692,11 @@ static void node_composit_buts_cvcvtcolor(uiLayout *layout, bContext *UNUSED(C),
 	uiItemR(layout, ptr, "cvcvtcolor_type", 0, "", ICON_NONE);
 }
 
+static void node_composit_buts_cvgetstructuringelement(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{ 
+	uiItemR(layout, ptr, "cvgetstructuringelement_type", 0, "", ICON_NONE);
+}
+
 /* only once called */
 static void node_composit_set_butfunc(bNodeType *ntype)
 {
@@ -1850,6 +1855,9 @@ static void node_composit_set_butfunc(bNodeType *ntype)
 			break;
                 case CMP_NODE_CVCVTCOLOR:
 			ntype->uifunc=node_composit_buts_cvcvtcolor;
+			break;
+                case CMP_NODE_CVGETSTRUCTURINGELEMENT:
+			ntype->uifunc=node_composit_buts_cvgetstructuringelement;
 			break;
 	}
 	if (ntype->uifuncbut == NULL) ntype->uifuncbut = ntype->uifunc;

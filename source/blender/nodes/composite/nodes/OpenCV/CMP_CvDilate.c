@@ -31,51 +31,66 @@
 #include "../../BOCV_util.h"
 
 
-static bNodeSocketTemplate cmp_node_cvDilate_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "Iterations",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvDilate_in[] = {
+    { SOCK_RGBA, 1, "cvImage", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_INT, 1, "Iterations", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
+    { SOCK_FLOAT, 1, "Structuring element", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 15.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvDilate_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvDilate_out[] = {
+    { SOCK_RGBA, 0, "cvImage", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvDilate(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
-	int iterations;	
-	IplImage *image, *dst;
-	CV_FUNCNAME( "cvDilate" ); 
-	//TODO: Use atach buffers
-	if(out[0]->hasoutput==0) return;
-      
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
+static void node_composit_exec_cvDilate(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
+    int iterations;
+    IplImage *image, *dst;
+    IplConvKernel *kernel;
+    CompBuf* dst_buf;
+    int *valuesKernel, i;
+    
+    if (out[0]->hasoutput == 0) return;
 
-	 CV_CALL(image = in[0]->data);
-	 dst= cvCreateImage(cvSize(image->width,image->height),IPL_DEPTH_8U,1);
-	 CV_CALL(iterations=(int)in[1]->vec[0]);
-	 if(image->nChannels>1)
-	     CV_ERROR(CV_BadNumChannels,"The number of channels of the source image isn't 1" );
-	  	  
-	if(in[0]->data){
-		CV_CALL(cvDilate(image,dst,0,iterations));
-		out[0]->data= dst;
-	}
-	__CV_END__;
+    if (in[0]->data) {
+
+        image = BOCV_IplImage_attach(in[0]->data);
+        dst_buf = alloc_compbuf(image->width, image->height, image->nChannels, 1);
+        dst = BOCV_IplImage_attach(dst_buf);
+        iterations = (int) in[1]->vec[0];
+        if (in[2]->data) {
+                CompBuf* kernel_buf= in[2]->data;
+                valuesKernel= malloc(kernel_buf->x*kernel_buf->y * sizeof(int));
+                //Convert kernel to float array buf to send via socket
+                for(i=0; i< kernel_buf->x*kernel_buf->y; i++){
+                    valuesKernel[i]= (int)kernel_buf->rect[i];
+                }
+                kernel= cvCreateStructuringElementEx(
+                        kernel_buf->x, 
+                        kernel_buf->y, 
+                        kernel_buf->x/2, 
+                        kernel_buf->y/2, 
+                        CV_SHAPE_CUSTOM, 
+                        valuesKernel );
+                cvDilate(image, dst, kernel, iterations);
+        }else
+            cvDilate(image, dst, 0, iterations);
+        out[0]->data = dst_buf;
+        
+        BOCV_IplImage_detach(dst);
+        BOCV_IplImage_detach(image);
+    }
+
 }
 
+void register_node_type_cmp_cvdilate(ListBase *lb) {
+    static bNodeType ntype;
 
-void register_node_type_cmp_cvdilate(ListBase *lb)
-{
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVDILATE, "OpenCV - Dilate", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
-	node_type_socket_templates(&ntype,cmp_node_cvDilate_in, cmp_node_cvDilate_out);
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvDilate);
-	
-	nodeRegisterType(lb, &ntype);
+    node_type_base(&ntype, CMP_NODE_CVDILATE, "OpenCV - Dilate", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvDilate_in, cmp_node_cvDilate_out);
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvDilate);
+
+    nodeRegisterType(lb, &ntype);
 }
 
 

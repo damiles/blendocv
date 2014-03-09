@@ -1859,7 +1859,6 @@ static void registerCompositNodes(ListBase *ntypelist)
 	register_node_type_cmp_cvgravitycenter(ntypelist);
 	register_node_type_cmp_cvharris(ntypelist);
 	register_node_type_cmp_cvhough(ntypelist);
-	register_node_type_cmp_cvimage2image(ntypelist);
 	register_node_type_cmp_cvlaplace(ntypelist);
 	register_node_type_cmp_cvmult(ntypelist);
 	register_node_type_cmp_cvnegative(ntypelist);
@@ -1872,7 +1871,8 @@ static void registerCompositNodes(ListBase *ntypelist)
 	register_node_type_cmp_cvsub(ntypelist);
 	register_node_type_cmp_cvthreshold(ntypelist);
 	register_node_type_cmp_cvxor(ntypelist);
-	register_node_type_cmp_image2cvimage(ntypelist);
+	register_node_type_cmp_getStructuringElement(ntypelist);
+        
 }
 
 static void registerShaderNodes(ListBase *ntypelist) 

@@ -104,7 +104,7 @@ static void node_composit_exec_cvGravityCenter(void *data, bNode *node, bNodeSta
 	{
 		static bNodeType ntype;
 
-		node_type_base(&ntype, CMP_NODE_CVGRAVITYCENTER, "OpenCV - Gravity Center", NODE_CLASS_OCV_DRAW, NODE_OPTIONS);
+		node_type_base(&ntype, CMP_NODE_CVGRAVITYCENTER, "Gravity Center", NODE_CLASS_OCV_DRAW, NODE_OPTIONS);
 		node_type_socket_templates(&ntype,cmp_node_cvGravityCenter_in, cmp_node_cvGravityCenter_out);
 		node_type_size(&ntype, 150, 80, 250);
 		node_type_exec(&ntype, node_composit_exec_cvGravityCenter);

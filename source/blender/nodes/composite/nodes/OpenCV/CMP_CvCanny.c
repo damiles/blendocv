@@ -115,7 +115,7 @@ void register_node_type_cmp_cvcanny(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVCANNY, "OpenCV - Canny", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVCANNY, "Canny", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCanny_in, cmp_node_cvCanny_out);
 	node_type_size(&ntype, 150, 80, 250);
         node_type_init(&ntype, node_composit_init_cvcanny);

@@ -92,7 +92,7 @@ void register_node_type_cmp_cvdrawcontour(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVDRAWCONTOUR, "OpenCV - Draw Contour", NODE_CLASS_OCV_DRAW, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVDRAWCONTOUR, "Draw Contour", NODE_CLASS_OCV_DRAW, NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvDrawContour_in, cmp_node_cvDrawContour_out);
 	node_type_size(&ntype, 150, 80, 250);
 	node_type_exec(&ntype, node_composit_exec_cvDrawContour);

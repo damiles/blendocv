@@ -85,7 +85,7 @@ static void node_composit_exec_cvDiv(void *data, bNode *node, bNodeStack **in, b
 void register_node_type_cmp_cvdiv(ListBase *lb) {
     static bNodeType ntype;
 
-    node_type_base(&ntype, CMP_NODE_CVDIV, "OpenCV - Div", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_base(&ntype, CMP_NODE_CVDIV, "Div", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
     node_type_socket_templates(&ntype, cmp_node_cvDiv_in, cmp_node_cvDiv_out);
     node_type_size(&ntype, 150, 80, 250);
     node_type_exec(&ntype, node_composit_exec_cvDiv);

@@ -114,7 +114,7 @@ void register_node_type_cmp_cvcvtcolor(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVCVTCOLOR, "OpenCV - Convert color", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVCVTCOLOR, "Convert color", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCvtColor_in, cmp_node_cvCvtColor_out);
 	node_type_size(&ntype, 150, 80, 250);
         node_type_init(&ntype, node_composit_init_cvCvtColor);

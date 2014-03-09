@@ -31,83 +31,75 @@
 #include "../../BOCV_util.h"
 
 
-static bNodeSocketTemplate cmp_node_cvSmooth_in[]= {
-	{	SOCK_OCV_IMAGE, 1, "cvImage",			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	SOCK_FLOAT, 1, "Param1",			3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 100.0f},
-	{	SOCK_FLOAT, 1, "Param2",			3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 100.0f},
-	{	SOCK_FLOAT, 1, "Param3",			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f},
-	{	SOCK_FLOAT, 1, "Param4",			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvSmooth_in[] = {
+    { SOCK_RGBA, 1, "Image", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    { SOCK_INT, 1, "Aperture Width", 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 100.0f},
+    { SOCK_INT, 1, "Aperture Height", 3.0f, 0.0f, 0.0f, 0.0f, 1.0f, 100.0f},
+    { SOCK_FLOAT, 1, "Sigma 1", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f},
+    { SOCK_FLOAT, 1, "Sigma 2", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 100.0f},
+    { -1, 0, ""}
 };
-static bNodeSocketTemplate cmp_node_cvSmooth_out[]= {
-	{	SOCK_OCV_IMAGE, 0, "cvImage",			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+static bNodeSocketTemplate cmp_node_cvSmooth_out[] = {
+    { SOCK_RGBA, 0, "cvImage", 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
+    { -1, 0, ""}
 };
 
-static void node_composit_exec_cvSmooth(void *data, bNode *node, bNodeStack **in, bNodeStack **out)
-{
+static void node_composit_exec_cvSmooth(void *data, bNode *node, bNodeStack **in, bNodeStack **out) {
     //TODO: Use atach buffers
-	int w,h;
-	int p1, p2;
-	float p3,p4;
-	int type;
-	CV_FUNCNAME( "cvSmooth" ); 
-	if(out[0]->hasoutput==0) return;
-	cvSetErrMode(1); //Parent mode error
-	__CV_BEGIN__;
-	if(in[0]->data){
-		IplImage *img, *smth;
-		CV_CALL(img = in[0]->data);
-		w=img->width;
-		h=img->height;
-		CV_CALL(p1= (int)in[1]->vec[0]);
-		if((p1%2)==0){
-			p1--;
-		}
-		CV_CALL(p2= (int)in[2]->vec[0]);
-		if((p2%2)==0)
-			p2--;
-		CV_CALL(p3= in[3]->vec[0]);
-		CV_CALL(p4= in[4]->vec[0]);
-		
-		smth = cvCreateImage(cvSize(w,h), img->depth, img->nChannels);
-		
-	
-		switch(node->custom1) {
-			case 0:
-				type=CV_BLUR_NO_SCALE;
-				break;
-			case 1:
-				type=CV_BLUR;
-				break;
-			case 2:
-				type=CV_GAUSSIAN;
-				break;
-			case 3://Must change image to 8U with 1 3 or 4 channels
-				type=CV_MEDIAN;
-				break;
-			case 4://Must change image to 8U with 1 or 3 channels
-				type=CV_BILATERAL;
-				break;
-		}
-	
-		CV_CALL(cvSmooth(img, smth, type, p1, p2, p3, p4 ));
-		
-		CV_CALL(out[0]->data= smth);
-	}
-	__CV_END__;
+    int w, h;
+    int p1, p2;
+    float p3, p4;
+    int type;
+    if (out[0]->hasoutput == 0) return;
+
+    if (in[0]->data) {
+        IplImage *img, *smth;
+        CompBuf* dst_buf;
+        img = BOCV_IplImage_attach(in[0]->data);
+        w = img->width;
+        h = img->height;
+        //Make input data as odd value
+        p1 = (int) in[1]->vec[0];
+        if ((p1 % 2) == 0) {
+            p1--;
+        }
+        //Make input data as odd value
+        p2 = (int) in[2]->vec[0];
+        if ((p2 % 2) == 0)
+            p2--;
+        
+        p3 = in[3]->vec[0];
+        p4 = in[4]->vec[0];
+
+        dst_buf = alloc_compbuf(img->width, img->height, img->nChannels, 1);
+        smth = BOCV_IplImage_attach(dst_buf);
+        
+        type= node->custom1;
+        
+        cvSmooth(img, smth, type, p1, p2, p3, p4);
+
+        out[0]->data = dst_buf;
+        
+        BOCV_IplImage_detach(smth);
+        BOCV_IplImage_detach(img);
+    }
+
 }
 
 
-void register_node_type_cmp_cvsmooth(ListBase *lb)
+static void node_composit_init_cvsmooth(bNodeTree *UNUSED(ntree), bNode* node, bNodeTemplate *UNUSED(ntemp))
 {
-	static bNodeType ntype;
-	
-	node_type_base(&ntype, CMP_NODE_CVSMOOTH, "OpenCV - Smooth", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
-	node_type_socket_templates(&ntype,cmp_node_cvSmooth_in, cmp_node_cvSmooth_out);
-	node_type_size(&ntype, 150, 80, 250);
-	node_type_exec(&ntype, node_composit_exec_cvSmooth);
-	
-	nodeRegisterType(lb, &ntype);
+	node->custom1= CV_GAUSSIAN; //2
+}
+
+void register_node_type_cmp_cvsmooth(ListBase *lb) {
+    static bNodeType ntype;
+
+    node_type_base(&ntype, CMP_NODE_CVSMOOTH, "Smooth", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+    node_type_socket_templates(&ntype, cmp_node_cvSmooth_in, cmp_node_cvSmooth_out);
+    node_type_size(&ntype, 150, 80, 250);
+    node_type_exec(&ntype, node_composit_exec_cvSmooth);
+
+    nodeRegisterType(lb, &ntype);
 }
 

@@ -82,7 +82,7 @@ void register_node_type_cmp_cvcopy(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVCOPY, "OpenCV - Copy", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVCOPY, "Copy", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvCopy_in, cmp_node_cvCopy_out);
 	node_type_size(&ntype, 150, 80, 250);
 	node_type_exec(&ntype, node_composit_exec_cvCopy);

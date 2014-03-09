@@ -91,7 +91,7 @@ static void node_composit_exec_cvSobel(void *data, bNode *node, bNodeStack **in,
 void register_node_type_cmp_cvsobel(ListBase *lb) {
     static bNodeType ntype;
 
-    node_type_base(&ntype, CMP_NODE_CVSOBEL, "OpenCV - Sobel", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
+    node_type_base(&ntype, CMP_NODE_CVSOBEL, "Sobel", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
     node_type_socket_templates(&ntype, cmp_node_cvSobel_in, cmp_node_cvSobel_out);
     node_type_size(&ntype, 150, 80, 250);
     node_type_exec(&ntype, node_composit_exec_cvSobel);

@@ -100,7 +100,7 @@ static void node_composit_exec_cvAdd(void *data, bNode *node, bNodeStack **in, b
 void register_node_type_cmp_cvadd(ListBase *lb) {
     static bNodeType ntype;
 
-    node_type_base(&ntype, CMP_NODE_CVADDS, "OpenCV - Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
+    node_type_base(&ntype, CMP_NODE_CVADDS, "Add", NODE_CLASS_OCV_ARRAY, NODE_OPTIONS);
     node_type_socket_templates(&ntype, cmp_node_cvAdd_in, cmp_node_cvAdd_out);
 
     node_type_size(&ntype, 150, 80, 250);

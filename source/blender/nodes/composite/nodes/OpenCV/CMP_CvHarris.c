@@ -86,7 +86,7 @@ void register_node_type_cmp_cvharris(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVHARRIS, "OpenCV - Harris", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVHARRIS, "Harris", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvHarris_in, cmp_node_cvHarris_out);
 	node_type_size(&ntype, 150, 80, 250);
 	node_type_exec(&ntype, node_composit_exec_cvHarris);

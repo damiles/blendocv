@@ -88,7 +88,7 @@ void register_node_type_cmp_cverode(ListBase *lb)
 {
 	static bNodeType ntype;
 
-	node_type_base(&ntype, CMP_NODE_CVERODE, "OpenCV - Erode", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVERODE, "Erode", NODE_CLASS_OCV_IMAGEPROCESS, NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvErode_in, cmp_node_cvErode_out);
 	node_type_size(&ntype, 150, 80, 250);
 	node_type_exec(&ntype, node_composit_exec_cvErode);

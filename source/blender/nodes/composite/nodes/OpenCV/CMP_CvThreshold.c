@@ -113,7 +113,7 @@ void register_node_type_cmp_cvthreshold(ListBase *lb)
 {
 	static bNodeType ntype;
 	
-	node_type_base(&ntype, CMP_NODE_CVTHRESHOLD, "OpenCV - Threshold", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
+	node_type_base(&ntype, CMP_NODE_CVTHRESHOLD, "Threshold", NODE_CLASS_OCV_IMAGEPROCESS, NODE_PREVIEW|NODE_OPTIONS);
 	node_type_socket_templates(&ntype,cmp_node_cvThreshold_in, cmp_node_cvThreshold_out);
 	node_type_size(&ntype, 150, 80, 250);
         node_type_init(&ntype, node_composit_init_cvthreshold);
